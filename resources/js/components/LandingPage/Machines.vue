@@ -159,17 +159,23 @@ export default {
             ? JSON.parse(props.content.machines_list)
             : props.content.machines_list;
           
-          return baseMachines.map((bm, index) => {
-            if (parsed[index]) {
-              return {
-                ...bm,
-                name: parsed[index].name || bm.name,
-                spec: parsed[index].spec || bm.spec,
-                qty: parsed[index].qty || bm.qty,
-                img: parsed[index].img || bm.img
-              };
-            }
-            return bm;
+          return parsed.map((item, index) => {
+            const bm = baseMachines[index] || {};
+            return {
+              name: item.name || bm.name || 'Machine',
+              spec: item.spec || bm.spec || '',
+              qty: item.qty || bm.qty || 0,
+              icon: item.icon || bm.icon || 'ti-settings-2',
+              img: item.img || bm.img || '',
+              shortDesc: item.shortDesc || bm.shortDesc || item.longDesc || bm.longDesc || '',
+              longDesc: item.longDesc || bm.longDesc || '',
+              details: {
+                origin: item.origin || (bm.details && bm.details.origin) || '',
+                precision: item.precision || (bm.details && bm.details.precision) || '',
+                safety: item.safety || (bm.details && bm.details.safety) || '',
+                application: item.application || (bm.details && bm.details.application) || ''
+              }
+            };
           });
         } catch (e) {
           console.error('Failed to parse dynamic machines_list, fallback to default:', e);

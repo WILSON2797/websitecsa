@@ -11,10 +11,16 @@
         
         <!-- Certificates Grid (Left) -->
         <div class="cert-grid reveal">
-          <div v-for="(c, idx) in certList" :key="idx" class="cert-card">
+          <div v-for="(c, idx) in certList" :key="idx" class="cert-card" style="display: flex; flex-direction: column;">
             <div class="cert-icon"><i :class="['ti', c.icon || 'ti-certificate']" aria-hidden="true"></i></div>
             <div class="cert-name">{{ c.name }}</div>
-            <div class="cert-desc">{{ c.desc }}</div>
+            <div class="cert-desc" style="flex-grow: 1;">{{ c.desc }}</div>
+            <div class="cert-action" v-if="c.img" style="margin-top: 15px; text-align: left;">
+              <a href="#" @click.prevent="openModal(c)" class="view-cert-link" style="display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; transition: color 0.3s ease; cursor: pointer;">
+                <span>View Certificate</span>
+                <i class="ti ti-maximize"></i>
+              </a>
+            </div>
           </div>
         </div>
         
@@ -33,10 +39,32 @@
       </div>
     </div>
   </section>
+
+  <!-- WhatsApp-style Lightbox Modal -->
+  <transition name="fade">
+    <div v-if="selectedCert" class="cert-modal-overlay" @click.self="closeModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+      
+      <button @click="closeModal" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 24px; width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.3s ease; z-index: 10000;">
+        <i class="ti ti-x"></i>
+      </button>
+      
+      <img :src="selectedCert.img" :alt="selectedCert.name" style="max-width: 100%; height: auto; max-height: 80vh; object-fit: contain; display: block; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+      
+      <div style="text-align: center; padding-top: 25px; max-width: 600px;">
+        <h4 style="font-family: var(--font-head); font-weight: 600; color: #fff; font-size: 20px; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+          {{ selectedCert.name }}
+        </h4>
+        <p style="font-family: var(--font-body); color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 auto; line-height: 1.5; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+          {{ selectedCert.desc }}
+        </p>
+      </div>
+      
+    </div>
+  </transition>
 </template>
 
 <script>
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 export default {
   name: 'Quality',
@@ -44,18 +72,16 @@ export default {
     content: {
       type: Object,
       default: () => ({})
+    },
+    certificates: {
+      type: Array,
+      default: () => []
     }
   },
   setup(props) {
     const certList = computed(() => {
-      if (props.content.quality_certs) {
-        try {
-          return typeof props.content.quality_certs === 'string'
-            ? JSON.parse(props.content.quality_certs)
-            : props.content.quality_certs;
-        } catch (e) {
-          console.error('Failed to parse quality_certs:', e);
-        }
+      if (props.certificates && props.certificates.length > 0) {
+        return props.certificates;
       }
       return [
         { name: 'ISO 9001:2015', desc: 'Sistem manajemen kualitas untuk konsistensi produk dan kepuasan pelanggan', icon: 'ti-certificate' },
@@ -83,9 +109,22 @@ export default {
       ];
     });
 
+    const selectedCert = ref(null);
+    const openModal = (cert) => {
+      selectedCert.value = cert;
+      document.body.style.overflow = 'hidden';
+    };
+    const closeModal = () => {
+      selectedCert.value = null;
+      document.body.style.overflow = '';
+    };
+
     return {
       certList,
-      qcSteps
+      qcSteps,
+      selectedCert,
+      openModal,
+      closeModal
     };
   }
 };

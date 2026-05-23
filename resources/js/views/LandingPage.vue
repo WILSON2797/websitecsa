@@ -2,7 +2,7 @@
   <div class="landing-page-wrapper">
     <div class="page-content">
       <!-- Hero Section -->
-      <Hero :content="content" />
+      <Hero :content="content" :certificates="certificates" />
 
       <!-- Ticker Strip -->
       <Ticker :content="content" />
@@ -17,7 +17,7 @@
       <Machines :content="content" />
 
       <!-- Quality Assurance Section -->
-      <Quality :content="content" />
+      <Quality :content="content" :certificates="certificates" />
 
       <!-- Clients Section -->
       <Clients :content="content" />
@@ -55,7 +55,11 @@ export default {
   props: {
     content: {
       type: Object,
-      required: true
+      default: () => ({})
+    },
+    certificates: {
+      type: Array,
+      default: () => []
     }
   },
   emits: ['update-active-section'],

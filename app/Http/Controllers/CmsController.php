@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\CmsContent;
+use App\Models\Product;
+use App\Models\Machine;
+use App\Models\Client;
 use Illuminate\Http\Request;
 
 class CmsController extends Controller
@@ -18,6 +21,11 @@ class CmsController extends Controller
         foreach ($contents as $content) {
             $mapped[$content->key] = $content->value;
         }
+
+        // Load relational data dynamically from separate tables
+        $mapped['products_list'] = Product::orderBy('id', 'asc')->get();
+        $mapped['machines_list'] = Machine::orderBy('id', 'asc')->get();
+        $mapped['clients_list'] = Client::orderBy('id', 'asc')->get();
 
         return response()->json($mapped);
     }

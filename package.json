@@ -17,6 +17,8 @@
         "vue": "^3.4.15"
     },
     "dependencies": {
+        "browser-image-compression": "^2.0.2",
+        "sweetalert2": "^11.26.25",
         "vue-router": "^4.6.4"
     }
 }

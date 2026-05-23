@@ -167,6 +167,7 @@ export default {
     };
 
     const getToleranceVal = (id) => {
+      if (product.value && product.value.tolerance) return product.value.tolerance;
       switch (id) {
         case 0: return '±0.05 mm (High Precision)';
         case 1: return '±0.10 mm (Deep drawing flow)';
@@ -179,6 +180,7 @@ export default {
     };
 
     const getCapacityVal = (id) => {
+      if (product.value && product.value.capacity) return product.value.capacity;
       switch (id) {
         case 0: return '45 Ton — 300 Ton';
         case 1: return '100 Ton — 500 Ton';
@@ -191,6 +193,7 @@ export default {
     };
 
     const getSpeedVal = (id) => {
+      if (product.value && product.value.speed) return product.value.speed;
       switch (id) {
         case 0: return '45 — 120 strokes / m';
         case 1: return '15 — 35 strokes / m';
@@ -203,6 +206,7 @@ export default {
     };
 
     const getVolumeVal = (id) => {
+      if (product.value && product.value.volume) return product.value.volume;
       switch (id) {
         case 0: return 'High Volume Mass';
         case 1: return 'Medium to High Parts';
@@ -215,6 +219,7 @@ export default {
     };
 
     const getAuxiliary = (id) => {
+      if (product.value && product.value.auxiliary) return product.value.auxiliary;
       switch (id) {
         case 0: return 'Peralatan decoiler loops otomatis, roller straightener leveling loops, pelumas otomatis mikro spray.';
         case 1: return 'Bantalan hidrolik kontrol tekanan, pengontrol ketebalan lembaran, sistem pembentuk tanpa sambungan khusus.';
@@ -227,6 +232,7 @@ export default {
     };
 
     const getSafety = (id) => {
+      if (product.value && product.value.safety) return product.value.safety;
       switch (id) {
         case 0:
         case 1:
@@ -243,6 +249,7 @@ export default {
     };
 
     const getTypical = (id) => {
+      if (product.value && product.value.typical) return product.value.typical;
       switch (id) {
         case 0: return 'Terminal kelistrikan kuningan, klip pegas motor, braket mesin mobil, EMI shielding electronics housing.';
         case 1: return 'Baterai EV shell cups, filter oli silinder tanpa sambungan, tabung pemadam api, tutup tangki BBM.';

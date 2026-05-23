@@ -3,6 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\CmsContent;
+use App\Models\Product;
+use App\Models\Machine;
+use App\Models\Client;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -12,6 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Create Admin User
+        \App\Models\User::firstOrCreate(
+            ['email' => 'admin@csa.com'],
+            [
+                'name' => 'Administrator',
+                'password' => \Illuminate\Support\Facades\Hash::make('password')
+            ]
+        );
+
         // 1. Hero & Stats Section
         CmsContent::updateOrCreate(
             ['key' => 'hero_badge'],
@@ -111,7 +123,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 4. Products (Capabilities) Section
+        // 4. Products Capabilities Header CMS
         CmsContent::updateOrCreate(
             ['key' => 'products_eyebrow'],
             ['section' => 'products', 'value' => 'LAYANAN & PRODUK']
@@ -124,58 +136,95 @@ class DatabaseSeeder extends Seeder
             ['key' => 'products_sub'],
             ['section' => 'products', 'value' => 'Kami menyediakan solusi stamping lengkap mulai dari desain die hingga produksi massal.']
         );
-        CmsContent::updateOrCreate(
-            ['key' => 'products_list'],
-            [
-                'section' => 'products',
-                'value' => json_encode([
-                    [
-                        'tag' => 'HIGH VOLUME',
-                        'name' => 'Progressive Stamping',
-                        'desc' => 'Proses stamping berkelanjutan dengan beberapa stasiun die untuk produksi volume tinggi secara efisien.',
-                        'specs' => ['±0.05mm toleransi', 'Vol. tinggi', 'Otomatis'],
-                        'icon' => 'ti-adjustments-horizontal'
-                    ],
-                    [
-                        'tag' => 'COMPLEX SHAPE',
-                        'name' => 'Deep Drawing',
-                        'desc' => 'Proses pembentukan lembaran logam menjadi komponen berbentuk cup, silinder, atau shell tanpa sambungan.',
-                        'specs' => ['Tanpa sambungan', 'Ketebalan seragam'],
-                        'icon' => 'ti-arrow-down-circle'
-                    ],
-                    [
-                        'tag' => 'PRECISION CUT',
-                        'name' => 'Fine Blanking',
-                        'desc' => 'Pemotongan presisi dengan permukaan shear yang halus dan rata tanpa memerlukan proses finishing tambahan.',
-                        'specs' => ['Permukaan halus', 'No finishing'],
-                        'icon' => 'ti-scissors'
-                    ],
-                    [
-                        'tag' => 'MULTI-STEP',
-                        'name' => 'Transfer Stamping',
-                        'desc' => 'Proses multi-tahap dengan transfer otomatis antar stasiun, ideal untuk komponen berukuran besar dan kompleks.',
-                        'specs' => ['Komponen besar', 'Transfer otomatis'],
-                        'icon' => 'ti-repeat'
-                    ],
-                    [
-                        'tag' => 'IN-HOUSE',
-                        'name' => 'Tool & Die Making',
-                        'desc' => 'Desain dan fabrikasi die in-house menggunakan CAD/CAM dan mesin CNC presisi tinggi untuk semua jenis tooling.',
-                        'specs' => ['CAD/CAM', 'CNC Machining'],
-                        'icon' => 'ti-tool'
-                    ],
-                    [
-                        'tag' => 'FINISHING',
-                        'name' => 'Surface Treatment',
-                        'desc' => 'Layanan electroplating, powder coating, dan phosphating untuk meningkatkan ketahanan korosi dan estetika produk.',
-                        'specs' => ['Electroplating', 'Powder Coating'],
-                        'icon' => 'ti-droplets'
-                    ]
-                ])
-            ]
-        );
 
-        // 5. Production Facility Section (Machines)
+        // Seed 4b. PRODUCTS Relational Table
+        Product::truncate();
+        Product::create([
+            'tag' => 'HIGH VOLUME',
+            'name' => 'Progressive Stamping',
+            'desc' => 'Proses stamping berkelanjutan dengan beberapa stasiun die untuk produksi volume tinggi secara efisien.',
+            'specs' => ['±0.05mm toleransi', 'Vol. tinggi', 'Otomatis'],
+            'icon' => 'ti-adjustments-horizontal',
+            'tolerance' => '±0.05 mm (High Precision)',
+            'capacity' => '45 Ton — 300 Ton',
+            'speed' => '45 — 120 strokes / m',
+            'volume' => 'High Volume Mass',
+            'auxiliary' => 'Peralatan decoiler loops otomatis, roller straightener leveling loops, pelumas otomatis mikro spray.',
+            'safety' => 'Tirai cahaya optoelektronik keselamatan kerja, sensor deteksi penumpukan pelat ganda, rem kopling pneumatik darurat.',
+            'typical' => 'Terminal kelistrikan kuningan, klip pegas motor, braket mesin mobil, EMI shielding electronics housing.'
+        ]);
+        Product::create([
+            'tag' => 'COMPLEX SHAPE',
+            'name' => 'Deep Drawing',
+            'desc' => 'Proses pembentukan lembaran logam menjadi komponen berbentuk cup, silinder, atau shell tanpa sambungan.',
+            'specs' => ['Tanpa sambungan', 'Ketebalan seragam'],
+            'icon' => 'ti-arrow-down-circle',
+            'tolerance' => '±0.10 mm (Deep drawing flow)',
+            'capacity' => '100 Ton — 500 Ton',
+            'speed' => '15 — 35 strokes / m',
+            'volume' => 'Medium to High Parts',
+            'auxiliary' => 'Bantalan hidrolik kontrol tekanan, pengontrol ketebalan lembaran, sistem pembentuk tanpa sambungan khusus.',
+            'safety' => 'Tirai cahaya optoelektronik keselamatan kerja, sensor deteksi penumpukan pelat ganda, rem kopling pneumatik darurat.',
+            'typical' => 'Baterai EV shell cups, filter oli silinder tanpa sambungan, tabung pemadam api, tutup tangki BBM.'
+        ]);
+        Product::create([
+            'tag' => 'PRECISION CUT',
+            'name' => 'Fine Blanking',
+            'desc' => 'Pemotongan presisi dengan permukaan shear yang halus dan rata tanpa memerlukan proses finishing tambahan.',
+            'specs' => ['Permukaan halus', 'No finishing'],
+            'icon' => 'ti-scissors',
+            'tolerance' => '±0.01 mm (Micro fine clearance)',
+            'capacity' => '80 Ton — 250 Ton',
+            'speed' => '60 — 180 strokes / m',
+            'volume' => 'Safety-Critical Precision',
+            'auxiliary' => 'Penjepit pilot mikro hidrolik presisi tinggi, fine blanking punch clearances, die ejector pad assemblies.',
+            'safety' => 'Tirai cahaya optoelektronik keselamatan kerja, sensor deteksi penumpukan pelat ganda, rem kopling pneumatik darurat.',
+            'typical' => 'Roda gigi transmisi presisi halus, kopling cakram, pelat katup pengereman safety, spacer mesin mikro.'
+        ]);
+        Product::create([
+            'tag' => 'MULTI-STEP',
+            'name' => 'Transfer Stamping',
+            'desc' => 'Proses multi-tahap dengan transfer otomatis antar stasiun, ideal untuk komponen berukuran besar dan kompleks.',
+            'specs' => ['Komponen besar', 'Transfer otomatis'],
+            'icon' => 'ti-repeat',
+            'tolerance' => '±0.15 mm (Transfer layout spec)',
+            'capacity' => '200 Ton — 500 Ton',
+            'speed' => '12 — 30 strokes / m',
+            'volume' => 'Large Frame Structural',
+            'auxiliary' => 'Robot manipulator lengan transfer otomatis, stasiun pengubah die cepat, pilot indexing pins.',
+            'safety' => 'Tirai cahaya optoelektronik keselamatan kerja, sensor deteksi penumpukan pelat ganda, rem kopling pneumatik darurat.',
+            'typical' => 'Braket penguat sasis otomotif ukuran besar, panel pintu struktural, penutup kompresor pendingin udara.'
+        ]);
+        Product::create([
+            'tag' => 'IN-HOUSE',
+            'name' => 'Tool & Die Making',
+            'desc' => 'Desain dan fabrikasi die in-house menggunakan CAD/CAM dan mesin CNC presisi tinggi untuk semua jenis tooling.',
+            'specs' => ['CAD/CAM', 'CNC Machining'],
+            'icon' => 'ti-tool',
+            'tolerance' => '±0.002 mm (CNC Tooling precision)',
+            'capacity' => 'CNC travel clearance',
+            'speed' => 'Up to 24,000 RPM Spindle',
+            'volume' => 'Custom Prototype & Die',
+            'auxiliary' => 'Sistem CAD/CAM die design modeling, wire cut EDM generator sub-micron, multi-axis CNC stage fixtures.',
+            'safety' => 'Pintu kabin tertutup sensor interlock laser, sensor pendeteksi getaran poros spindel spindel, sensor overload motor CNC.',
+            'typical' => 'Pembuatan progressive dies set, stage tooling dies, transfer die arm fixtures, CNC custom molds presisi.'
+        ]);
+        Product::create([
+            'tag' => 'FINISHING',
+            'name' => 'Surface Treatment',
+            'desc' => 'Layanan electroplating, powder coating, dan phosphating untuk meningkatkan ketahanan korosi dan estetika produk.',
+            'specs' => ['Electroplating', 'Powder Coating'],
+            'icon' => 'ti-droplets',
+            'tolerance' => 'AS9100 / ASTM coating rating',
+            'capacity' => 'Electroplating conveyorized',
+            'speed' => 'Realtime Continuous Line',
+            'volume' => 'Outbound Finished Coating',
+            'auxiliary' => 'Bak pelapis electroplating kimia otomatis, oven conveyorized powder coating, spray pretreatment loops.',
+            'safety' => 'Pembersih udara filter hisap uap kimia asam, pengaman katup pelepas gas otomatis, sensor kebocoran kimia.',
+            'typical' => 'Pelapisan anti-karat komponen sasis, powder coating casing elektronik, zinc plating terminal tembaga.'
+        ]);
+
+        // 5. Production Facility CMS Header
         CmsContent::updateOrCreate(
             ['key' => 'machines_eyebrow'],
             ['section' => 'machines', 'value' => 'FASILITAS PRODUKSI']
@@ -189,20 +238,6 @@ class DatabaseSeeder extends Seeder
             ['section' => 'machines', 'value' => 'Dilengkapi mesin press modern dengan berbagai kapasitas untuk memenuhi kebutuhan produksi Anda.']
         );
         CmsContent::updateOrCreate(
-            ['key' => 'machines_list'],
-            [
-                'section' => 'machines',
-                'value' => json_encode([
-                    ['name' => 'Mechanical Press', 'spec' => 'Kapasitas 30T — 300T', 'qty' => 24, 'icon' => 'ti-settings-2'],
-                    ['name' => 'Hydraulic Press', 'spec' => 'Kapasitas 100T — 500T', 'qty' => 12, 'icon' => 'ti-droplet-half-2'],
-                    ['name' => 'Servo Press', 'spec' => 'Kapasitas 80T — 200T', 'qty' => 8, 'icon' => 'ti-cpu'],
-                    ['name' => 'Transfer Press', 'spec' => 'Kapasitas 200T — 500T', 'qty' => 6, 'icon' => 'ti-box'],
-                    ['name' => 'CNC Machining Center', 'spec' => 'Tool room & die making', 'qty' => 14, 'icon' => 'ti-sparkles'],
-                    ['name' => 'Welding Robot', 'spec' => 'Spot & MIG Welding', 'qty' => 10, 'icon' => 'ti-robot']
-                ])
-            ]
-        );
-        CmsContent::updateOrCreate(
             ['key' => 'machines_facilities'],
             [
                 'section' => 'machines',
@@ -214,6 +249,75 @@ class DatabaseSeeder extends Seeder
                 ])
             ]
         );
+
+        // Seed 5b. MACHINES Relational Table
+        Machine::truncate();
+        Machine::create([
+            'name' => 'Mechanical Press',
+            'spec' => 'Kapasitas 30T — 300T',
+            'qty' => 24,
+            'icon' => 'ti-settings-2',
+            'longDesc' => 'Armada mesin press mekanikal kami merupakan tulang punggung produksi massal dengan kecepatan ketukan tinggi. Dilengkapi dengan unit otomatisasi rol koil pengumpan (feeder lines) untuk mendukung efisiensi pengerjaan tinggi.',
+            'origin' => 'Jepang / Taiwan (AIDA, Seyi)',
+            'precision' => 'JIS B 6402 Grade 1 Accuracy',
+            'safety' => 'Dual-valve pneumatic clutch & optoelectronic light curtains keselamatan kerja otomatis, interlock overload sensors.',
+            'application' => 'Braket otomotif, terminal kuningan kelistrikan, klip logam otomotif, EMI shielding electronics housing.'
+        ]);
+        Machine::create([
+            'name' => 'Hydraulic Press',
+            'spec' => 'Kapasitas 100T — 500T',
+            'qty' => 12,
+            'icon' => 'ti-droplet-half-2',
+            'longDesc' => 'Didesain untuk proses pengerjaan penarikan dalam (deep drawing) yang membutuhkan tekanan stabil sepanjang stroke. Mampu menangani lembaran logam tebal menjadi bentuk silinder atau cup tanpa sambungan.',
+            'origin' => 'Jepang / Taiwan (AMADA, Seyi)',
+            'precision' => 'JIS B 6403 Hydraulic Standard',
+            'safety' => 'Hydraulic overload protector valves, emergency physical interlock gate sensor, rem kopling darurat pneumatik.',
+            'application' => 'EV battery case shells, filter oli silinder, tabung pemadam api tanpa sambungan, tutup tangki bahan bakar.'
+        ]);
+        Machine::create([
+            'name' => 'Servo Press',
+            'spec' => 'Kapasitas 80T — 200T',
+            'qty' => 8,
+            'icon' => 'ti-cpu',
+            'longDesc' => 'Menggunakan teknologi motor AC servo dengan kurva ketukan yang dapat diprogram penuh. Memberikan akurasi penekanan mikro-milimeter guna menghindari keretakan material (springback control) pada material berkekuatan tarik tinggi.',
+            'origin' => 'Jepang (AIDA, AMADA)',
+            'precision' => 'Micron-level control (±0.005mm)',
+            'safety' => 'Direct torque motor feedback sensor, emergency brake switch, sensor pendeteksi ketebalan plat ganda.',
+            'application' => 'Komponen safety-critical otomotif, roda gigi transmisi mikro presisi halus, kopling cakram, spacer mesin.'
+        ]);
+        Machine::create([
+            'name' => 'Transfer Press',
+            'spec' => 'Kapasitas 200T — 500T',
+            'qty' => 6,
+            'icon' => 'ti-box',
+            'longDesc' => 'Menghubungkan beberapa proses dies (blanking, bending, piercing) dalam satu rangkaian stasiun otomatis dengan robot lengan transfer. Ideal untuk memproduksi komponen struktural berukuran menengah hingga besar secara massal.',
+            'origin' => 'Jepang (Komatsu)',
+            'precision' => 'Automated stational alignment accuracy',
+            'safety' => 'Pneumatic transfer feedback lines, physical perimeter fencing, tirai cahaya optoelektronik keselamatan kerja.',
+            'application' => 'Sasis struktural otomotif ukuran besar, kompresor AC shells, panel pintu struktural, komponen frame.'
+        ]);
+        Machine::create([
+            'name' => 'CNC Machining Center',
+            'spec' => 'Tool room & die making',
+            'qty' => 14,
+            'icon' => 'ti-sparkles',
+            'longDesc' => 'Fasilitas in-house tooling kami dilengkapi dengan CNC millings berkecepatan tinggi untuk membuat, memodifikasi, dan merawat cetakan dies logam secara presisi, menjamin kesiapan cetakan tanpa bergantung vendor luar.',
+            'origin' => 'Jepang / Taiwan (Matsuura, YCM)',
+            'precision' => 'Sub-micron tooling tolerance (±0.002mm)',
+            'safety' => 'Enclosed cabin interlock door, automated spindle overload monitor, dust filtration suction loops.',
+            'application' => 'Pembuatan progressive dies set, stage tooling dies, transfer die arm fixtures, CNC custom molds presisi.'
+        ]);
+        Machine::create([
+            'name' => 'Welding Robot',
+            'spec' => 'Spot & MIG Welding',
+            'qty' => 10,
+            'icon' => 'ti-robot',
+            'longDesc' => 'Lengan robot multi-axis otomatis untuk pengelasan titik (spot welding) dan pengelasan gas metal (MIG). Menghasilkan pengelasan yang rapi, penetrasi kuat, dan bebas dari cacat las manusia pada komponen rakitan.',
+            'origin' => 'Jepang (OTC Daihen, Yaskawa)',
+            'precision' => 'High repeatability path accuracy (±0.08mm)',
+            'safety' => 'Flash arc safety curtain, area laser safety scanners, physical fencing perimeter interlock.',
+            'application' => 'Sub-assembly welding bracket otomotif, reinforcement panel sasis, pengelasan presisi sasis.'
+        ]);
 
         // 6. Quality Assurance Section
         CmsContent::updateOrCreate(
@@ -253,7 +357,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 7. Clients & Partners Section
+        // 7. Clients & Partners CMS Header
         CmsContent::updateOrCreate(
             ['key' => 'clients_eyebrow'],
             ['section' => 'clients', 'value' => 'KLIEN & MITRA']
@@ -267,22 +371,6 @@ class DatabaseSeeder extends Seeder
             ['section' => 'clients', 'value' => 'Selama lebih dari 26 tahun, kami telah menjadi mitra terpercaya bagi perusahaan-perusahaan multinasional di berbagai sektor industri di Indonesia dan kawasan Asia Tenggara.']
         );
         CmsContent::updateOrCreate(
-            ['key' => 'clients_list'],
-            [
-                'section' => 'clients',
-                'value' => json_encode([
-                    ['name' => 'Toyota', 'industry' => 'Otomotif'],
-                    ['name' => 'Astra Honda', 'industry' => 'Otomotif'],
-                    ['name' => 'Denso', 'industry' => 'Komponen Otomotif'],
-                    ['name' => 'Yamaha', 'industry' => 'Otomotif'],
-                    ['name' => 'Panasonic', 'industry' => 'Elektronik'],
-                    ['name' => 'Samsung SDI', 'industry' => 'Baterai EV'],
-                    ['name' => 'Schneider', 'industry' => 'Elektrikal'],
-                    ['name' => 'Mitsubishi', 'industry' => 'Otomotif & Elektrik']
-                ])
-            ]
-        );
-        CmsContent::updateOrCreate(
             ['key' => 'testimonial_quote'],
             ['section' => 'clients', 'value' => 'PT. Cahaya Sentosa Abadi telah menjadi mitra stamping kami selama lebih dari 10 tahun. Kualitas komponen yang konsisten, pengiriman tepat waktu, dan responsivitas tim mereka terhadap perubahan spesifikasi menjadikan mereka mitra yang sangat kami andalkan.']
         );
@@ -294,6 +382,17 @@ class DatabaseSeeder extends Seeder
             ['key' => 'testimonial_role'],
             ['section' => 'clients', 'value' => 'Procurement Manager, PT Astra Honda Motor']
         );
+
+        // Seed 7b. CLIENTS Relational Table
+        Client::truncate();
+        Client::create(['name' => 'Toyota', 'industry' => 'Otomotif']);
+        Client::create(['name' => 'Astra Honda', 'industry' => 'Otomotif']);
+        Client::create(['name' => 'Denso', 'industry' => 'Komponen Otomotif']);
+        Client::create(['name' => 'Yamaha', 'industry' => 'Otomotif']);
+        Client::create(['name' => 'Panasonic', 'industry' => 'Elektronik']);
+        Client::create(['name' => 'Samsung SDI', 'industry' => 'Baterai EV']);
+        Client::create(['name' => 'Schneider', 'industry' => 'Elektrikal']);
+        Client::create(['name' => 'Mitsubishi', 'industry' => 'Otomotif & Elektrik']);
 
         // 8. Contact Details
         CmsContent::updateOrCreate(
@@ -340,5 +439,8 @@ class DatabaseSeeder extends Seeder
             ['key' => 'contact_jam_2'],
             ['section' => 'contact', 'value' => 'Sabtu: 08.00 — 13.00 WIB']
         );
+
+        // Delete old unused JSON keys from cms_contents if they are in database to avoid confusion
+        CmsContent::whereIn('key', ['products_list', 'machines_list', 'clients_list'])->delete();
     }
 }

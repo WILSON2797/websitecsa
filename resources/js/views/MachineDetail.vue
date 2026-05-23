@@ -257,17 +257,27 @@ export default {
         list = JSON.parse(list);
       }
 
-      // Merge user custom database items if existing
-      const mergedList = baseMachines.map((bm, index) => {
-        if (list[index]) {
-          return {
-            ...bm,
-            name: list[index].name || bm.name,
-            spec: list[index].spec || bm.spec,
-            qty: list[index].qty || bm.qty
-          };
-        }
-        return bm;
+      if (!list || list.length === 0) {
+        list = baseMachines;
+      }
+
+      // Merge dynamic database items with static defaults matching indices
+      const mergedList = list.map((item, index) => {
+        const bm = baseMachines[index] || {};
+        return {
+          name: item.name || bm.name,
+          spec: item.spec || bm.spec,
+          qty: item.qty || bm.qty,
+          icon: item.icon || bm.icon || 'ti-settings-2',
+          img: item.img || bm.img,
+          longDesc: item.longDesc || bm.longDesc || 'Armada mesin manufaktur presisi tinggi Cahaya Sentosa Abadi.',
+          details: {
+            origin: item.origin || (bm.details && bm.details.origin) || 'Jepang / Taiwan',
+            precision: item.precision || (bm.details && bm.details.precision) || 'JIS Standard Accuracy',
+            safety: item.safety || (bm.details && bm.details.safety) || 'Sistem keselamatan kerja optoelektronik dengan tirai cahaya pengaman sensor gerak otomatis.',
+            application: item.application || (bm.details && bm.details.application) || 'Pengerjaan komponen presisi lembaran logam.'
+          }
+        };
       });
 
       const paramId = route.params.id;

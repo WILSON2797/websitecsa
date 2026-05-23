@@ -8,7 +8,7 @@
 
     <div v-else class="app-content-shell">
       <!-- Globally Persistent Navbar (Zero-flash during page transition) -->
-      <Navbar :activeSection="activeSection" />
+      <Navbar v-if="!isAdminRoute" :activeSection="activeSection" />
 
       <!-- Main Routed View SWAP Frame -->
       <router-view v-slot="{ Component }">
@@ -16,19 +16,20 @@
           <component 
             :is="Component" 
             :content="content" 
+            :certificates="certificates"
             @update-active-section="updateActiveSection" 
           />
         </transition>
       </router-view>
 
       <!-- Globally Persistent Footer -->
-      <Footer :content="content" />
+      <Footer v-if="!isAdminRoute" :content="content" />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import axios from 'axios';
 
@@ -44,13 +45,22 @@ export default {
   setup() {
     const loading = ref(true);
     const content = ref({});
+    const certificates = ref([]);
     const activeSection = ref('hero');
     const route = useRoute();
 
+    const isAdminRoute = computed(() => {
+      return route.path.startsWith('/admin');
+    });
+
     const fetchContent = async () => {
       try {
-        const response = await axios.get('/api/content');
-        content.value = response.data;
+        const [contentRes, certRes] = await Promise.all([
+          axios.get('/api/content'),
+          axios.get('/api/certificates')
+        ]);
+        content.value = contentRes.data;
+        certificates.value = certRes.data;
       } catch (error) {
         console.error('Failed to load global company content:', error);
       } finally {
@@ -68,6 +78,9 @@ export default {
     watch(
       () => route.path,
       (newPath) => {
+        // Silently fetch fresh content on route change so SPA always has latest CMS data
+        fetchContent();
+
         if (newPath === '/about') activeSection.value = 'about';
         else if (newPath === '/products') activeSection.value = 'products';
         else if (newPath === '/machines') activeSection.value = 'machines';
@@ -75,7 +88,6 @@ export default {
         else if (newPath === '/clients') activeSection.value = 'clients';
         else if (newPath === '/contact') activeSection.value = 'contact';
         else if (newPath === '/') {
-          // If on home route, scroll position handleScroll in LandingPage will update it
           activeSection.value = 'hero';
         }
       },
@@ -84,13 +96,22 @@ export default {
 
     onMounted(() => {
       fetchContent();
+
+      // Silently fetch fresh content when user switches back to this tab (from admin panel tab)
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          fetchContent();
+        }
+      });
     });
 
     return {
       loading,
       content,
+      certificates,
       activeSection,
-      updateActiveSection
+      updateActiveSection,
+      isAdminRoute
     };
   }
 };

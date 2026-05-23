@@ -49,6 +49,10 @@ export default {
     content: {
       type: Object,
       default: () => ({})
+    },
+    certificates: {
+      type: Array,
+      default: () => []
     }
   },
   setup(props) {
@@ -80,14 +84,8 @@ export default {
     });
 
     const certBadges = computed(() => {
-      if (props.content.hero_certs) {
-        try {
-          return typeof props.content.hero_certs === 'string'
-            ? JSON.parse(props.content.hero_certs)
-            : props.content.hero_certs;
-        } catch (e) {
-          console.error('Failed to parse hero_certs:', e);
-        }
+      if (props.certificates && props.certificates.length > 0) {
+        return props.certificates.map(c => c.name);
       }
       return ['ISO 9001:2015', 'IATF 16949', 'ISO 14001', '5S & Kaizen'];
     });

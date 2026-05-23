@@ -3,7 +3,7 @@
     <div class="page-content">
       <!-- Single Section wrapper with padding to clear Navbar -->
       <div class="standalone-section-wrapper" style="padding-top: 80px; min-height: 80vh; background-color: var(--white);">
-        <Quality :content="content" />
+        <Quality :content="content" :certificates="certificates" />
       </div>
     </div>
   </div>
@@ -22,6 +22,10 @@ export default {
     content: {
       type: Object,
       required: true
+    },
+    certificates: {
+      type: Array,
+      default: () => []
     }
   },
   setup() {
