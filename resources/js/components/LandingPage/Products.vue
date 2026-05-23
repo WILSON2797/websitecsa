@@ -9,9 +9,9 @@
       </div>
       <div class="product-grid">
         <div v-for="(prod, idx) in productList" :key="idx" class="product-card reveal">
-          <div class="product-img">
-            <div class="product-img-bg"></div>
-            <i :class="['ti', prod.icon || 'ti-hammer']" aria-hidden="true"></i>
+          <div class="product-img" style="height: 160px; overflow: hidden; position: relative;">
+            <img :src="getProductImg(prod, idx)" class="product-photo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;" :alt="prod.name" />
+            <div class="product-img-bg" style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(15,42,66,0.25)); pointer-events: none;"></div>
           </div>
           <div class="product-body">
             <div class="product-tag">{{ prod.tag }}</div>
@@ -101,8 +101,22 @@ export default {
       ];
     });
 
+    const getProductImg = (prod, idx) => {
+      if (prod.img) return prod.img;
+      const fallbacks = [
+        'https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?q=80&w=800&auto=format&fit=crop', // Progressive Stamping
+        'https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop', // Deep Drawing
+        'https://images.unsplash.com/photo-1535813547-99c456a41d4a?q=80&w=800&auto=format&fit=crop', // Fine Blanking
+        'https://images.unsplash.com/photo-1616348436168-de43ad0db179?q=80&w=800&auto=format&fit=crop', // Transfer Stamping
+        'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?q=80&w=800&auto=format&fit=crop', // Tool & Die Making
+        'https://images.unsplash.com/photo-1563770660941-20978e870e26?q=80&w=800&auto=format&fit=crop'  // Surface Treatment
+      ];
+      return fallbacks[idx] || fallbacks[0];
+    };
+
     return {
-      productList
+      productList,
+      getProductImg
     };
   }
 };
@@ -145,5 +159,9 @@ export default {
   flex-direction: column;
   justify-content: space-between;
   flex-grow: 1;
+}
+
+.product-card:hover .product-photo {
+  transform: scale(1.05);
 }
 </style>
