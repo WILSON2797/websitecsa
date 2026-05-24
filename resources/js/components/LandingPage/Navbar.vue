@@ -19,8 +19,29 @@
         <router-link to="/documentation" :class="{ 'active': activeSection === 'documentation' }">Documentation</router-link>
         <router-link to="/contact" :class="{ 'active': activeSection === 'contact' }">Contact</router-link>
       </div>
-      <router-link class="nav-quote" to="/contact">Request Quote</router-link>
+      <div class="nav-actions">
+        <router-link class="nav-quote" to="/contact">Request Quote</router-link>
+        <button class="hamburger-btn" @click="toggleMobileMenu" aria-label="Toggle menu">
+          <i :class="isMobileMenuOpen ? 'ti ti-x' : 'ti ti-menu-2'"></i>
+        </button>
+      </div>
     </div>
+    
+    <!-- Mobile Menu -->
+    <transition name="slide-down">
+      <div v-if="isMobileMenuOpen" class="mobile-menu">
+        <router-link to="/" @click="closeMobileMenu" :class="{ 'active': activeSection === 'hero' }">Home</router-link>
+        <router-link to="/about" @click="closeMobileMenu" :class="{ 'active': activeSection === 'about' }">About Us</router-link>
+        <router-link to="/products" @click="closeMobileMenu" :class="{ 'active': activeSection === 'products' }">Products</router-link>
+        <router-link to="/machines" @click="closeMobileMenu" :class="{ 'active': activeSection === 'machines' }">Machines</router-link>
+        <router-link to="/facilities" @click="closeMobileMenu" :class="{ 'active': activeSection === 'facilities' }">Facilities</router-link>
+        <router-link to="/quality" @click="closeMobileMenu" :class="{ 'active': activeSection === 'quality' }">Quality</router-link>
+        <router-link to="/clients" @click="closeMobileMenu" :class="{ 'active': activeSection === 'clients' }">Clients</router-link>
+        <router-link to="/documentation" @click="closeMobileMenu" :class="{ 'active': activeSection === 'documentation' }">Documentation</router-link>
+        <router-link to="/contact" @click="closeMobileMenu" :class="{ 'active': activeSection === 'contact' }">Contact</router-link>
+        <router-link class="mobile-nav-quote" to="/contact" @click="closeMobileMenu">Request Quote</router-link>
+      </div>
+    </transition>
   </nav>
 </template>
 
@@ -37,9 +58,18 @@ export default {
   },
   setup() {
     const isScrolled = ref(false);
+    const isMobileMenuOpen = ref(false);
 
     const handleScroll = () => {
       isScrolled.value = window.scrollY > 20;
+    };
+
+    const toggleMobileMenu = () => {
+      isMobileMenuOpen.value = !isMobileMenuOpen.value;
+    };
+
+    const closeMobileMenu = () => {
+      isMobileMenuOpen.value = false;
     };
 
     onMounted(() => {
@@ -52,7 +82,10 @@ export default {
     });
 
     return {
-      isScrolled
+      isScrolled,
+      isMobileMenuOpen,
+      toggleMobileMenu,
+      closeMobileMenu
     };
   }
 };

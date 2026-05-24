@@ -2,7 +2,7 @@
   <div class="landing-page-wrapper">
     <div class="page-content">
       <!-- Single Section wrapper with padding to clear Navbar -->
-      <div class="standalone-section-wrapper" style="padding-top: 80px; min-height: 80vh; background-color: var(--white);">
+      <div class="standalone-section-wrapper">
         <Quality :content="content" :certificates="certificates" />
       </div>
     </div>
@@ -56,3 +56,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.standalone-section-wrapper {
+  padding-top: 80px;
+  min-height: 80vh;
+  background-color: var(--white);
+}
+</style>

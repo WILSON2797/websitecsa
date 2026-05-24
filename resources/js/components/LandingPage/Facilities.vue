@@ -271,7 +271,28 @@ export default {
 
 @media (max-width: 576px) {
   .facility-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .facility-img-slot {
+    height: 100px;
+  }
+  .facility-card-title {
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .facility-card-desc {
+    font-size: 11px;
+    margin-bottom: 12px;
+  }
+  .btn-facility-detail {
+    padding: 6px 12px;
+    font-size: 10px;
+  }
+  .facility-placeholder-graphic {
+    font-size: 32px;
+  }
+  .facility-body {
+    padding: 16px;
   }
 }
 </style>

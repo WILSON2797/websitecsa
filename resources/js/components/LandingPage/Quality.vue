@@ -12,12 +12,12 @@
         <!-- Certificates Grid (Left) -->
         <div class="cert-grid">
           <div v-for="(c, idx) in certList" :key="idx" data-aos="fade-up" :data-aos-delay="idx * 150">
-            <div class="cert-card" style="display: flex; flex-direction: column; height: 100%;">
+            <div class="cert-card cert-card-flex">
             <div class="cert-icon"><i :class="['ti', c.icon || 'ti-certificate']" aria-hidden="true"></i></div>
             <div class="cert-name">{{ c.name }}</div>
-            <div class="cert-desc" style="flex-grow: 1;">{{ c.desc }}</div>
-            <div class="cert-action" v-if="c.img" style="margin-top: 15px; text-align: left;">
-              <a href="#" @click.prevent="openModal(c)" class="view-cert-link" style="display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--gold); text-decoration: none; transition: color 0.3s ease; cursor: pointer;">
+            <div class="cert-desc cert-desc-flex">{{ c.desc }}</div>
+            <div class="cert-action cert-action-margin" v-if="c.img">
+              <a href="#" @click.prevent="openModal(c)" class="view-cert-link">
                 <span>View Certificate</span>
                 <i class="ti ti-maximize"></i>
               </a>
@@ -28,7 +28,7 @@
         
         <!-- QC Steps Checklist (Right) -->
         <div class="qc-steps" data-aos="fade-up" data-aos-duration="1000">
-          <h3 style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:20px;">Proses Quality Control</h3>
+          <h3 class="qc-process-title">Proses Quality Control</h3>
           <div v-for="(step, idx) in qcSteps" :key="idx" class="qc-step">
             <div class="qc-num">{{ step.num }}</div>
             <div>
@@ -44,19 +44,19 @@
 
   <!-- WhatsApp-style Lightbox Modal -->
   <transition name="fade">
-    <div v-if="selectedCert" class="cert-modal-overlay" @click.self="closeModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0, 0, 0, 0.95); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px;">
+    <div v-if="selectedCert" class="cert-modal-overlay" @click.self="closeModal">
       
-      <button @click="closeModal" style="position: absolute; top: 20px; right: 20px; background: rgba(255,255,255,0.1); border: none; color: #fff; font-size: 24px; width: 44px; height: 44px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: background 0.3s ease; z-index: 10000;">
+      <button @click="closeModal" class="cert-modal-close">
         <i class="ti ti-x"></i>
       </button>
       
-      <img :src="selectedCert.img" :alt="selectedCert.name" style="max-width: 100%; height: auto; max-height: 80vh; object-fit: contain; display: block; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.8);">
+      <img :src="selectedCert.img" :alt="selectedCert.name" class="cert-modal-img">
       
-      <div style="text-align: center; padding-top: 25px; max-width: 600px;">
-        <h4 style="font-family: var(--font-head); font-weight: 600; color: #fff; font-size: 20px; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+      <div class="cert-modal-text-wrapper">
+        <h4 class="cert-modal-title">
           {{ selectedCert.name }}
         </h4>
-        <p style="font-family: var(--font-body); color: rgba(255,255,255,0.7); font-size: 14px; margin: 0 auto; line-height: 1.5; text-shadow: 0 1px 3px rgba(0,0,0,0.5);">
+        <p class="cert-modal-desc">
           {{ selectedCert.desc }}
         </p>
       </div>
@@ -131,3 +131,99 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+/* Extracted Inline Styles */
+.cert-card-flex {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.cert-desc-flex {
+  flex-grow: 1;
+}
+.cert-action-margin {
+  margin-top: 15px;
+  text-align: left;
+}
+.view-cert-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--gold);
+  text-decoration: none;
+  transition: color 0.3s ease;
+  cursor: pointer;
+}
+.qc-process-title {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 20px;
+}
+.cert-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+.cert-modal-close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(255,255,255,0.1);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  z-index: 10000;
+}
+.cert-modal-img {
+  max-width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
+  border-radius: 4px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+}
+.cert-modal-text-wrapper {
+  text-align: center;
+  padding-top: 25px;
+  max-width: 600px;
+}
+.cert-modal-title {
+  font-family: var(--font-head);
+  font-weight: 600;
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.cert-modal-desc {
+  font-family: var(--font-body);
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  margin: 0 auto;
+  line-height: 1.5;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+</style>

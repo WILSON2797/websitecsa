@@ -2,10 +2,10 @@
   <div class="landing-page-wrapper documentation-page">
     <div class="page-content">
       
-      <section class="section" style="padding-top: 120px; background-color: var(--white); min-height: 80vh;">
+      <section class="section docs-section-wrapper">
         <div class="section-inner">
           
-          <div class="section-header" style="max-width: 600px; margin-bottom: 30px;">
+          <div class="section-header docs-header-wrapper">
             <div class="section-eyebrow">GALLERY OVERVIEW</div>
             <h2 class="section-title">Our Documentation</h2>
             <p class="section-sub">
@@ -178,3 +178,15 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.docs-section-wrapper {
+  padding-top: 120px;
+  background-color: var(--white);
+  min-height: 80vh;
+}
+.docs-header-wrapper {
+  max-width: 600px;
+  margin-bottom: 30px;
+}
+</style>

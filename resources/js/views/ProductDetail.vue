@@ -7,8 +7,8 @@
       <div class="hero-accent-bar"></div>
 
       <!-- Not Found State -->
-      <div v-if="!product" class="container py-5 text-center position-relative z-1" style="max-width: 600px; margin: 0 auto;">
-        <h2 class="text-danger mb-4" style="font-family: var(--font-head); font-size: 32px;">Spesifikasi Tidak Ditemukan</h2>
+      <div v-if="!product" class="container py-5 text-center position-relative z-1 empty-state-container">
+        <h2 class="text-danger mb-4 empty-state-title">Spesifikasi Tidak Ditemukan</h2>
         <p class="text-secondary mb-4 opacity-75">Lembar data teknis komponen yang Anda cari tidak tersedia dalam arsip kami.</p>
         <router-link to="/" class="btn-ghost-dark">
           <i class="ti ti-arrow-left me-2"></i> Kembali ke Beranda
@@ -16,59 +16,59 @@
       </div>
 
       <!-- Main Specifications Sheet -->
-      <div v-else class="container position-relative z-1" style="max-width: 1600px; margin: 0 auto;">
+      <div v-else class="container position-relative z-1 main-spec-container">
         
         <!-- Spec Overview Grid -->
-        <div class="row g-4 mb-4 detail-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 28px; align-items: stretch;">
+        <div class="row g-4 mb-4 detail-grid">
           
           <!-- Left Side: Technical Parameters Card (Pristine Light Blueprint) -->
-          <div class="spec-blueprint-canvas rounded-3xl" style="background: var(--white); border: 1px solid rgba(15, 42, 66, 0.12); box-shadow: 0 10px 30px rgba(15, 42, 66, 0.05); border-radius: 6px; padding: 24px; position: relative; overflow: hidden;">
+          <div class="spec-blueprint-canvas rounded-3xl">
             <div class="blueprint-grid-overlay"></div>
             
             <div class="position-relative z-1 w-100">
-              <span class="badge bg-danger font-label-md py-1 px-3 text-white text-uppercase tracking-wider mb-2" style="background: var(--accent); padding: 4px 10px; border-radius: 2px; font-size: 9px; font-weight: 600; letter-spacing: 1px; display: inline-block;">DOKUMEN TEKNIS #0{{ productId + 1 }}</span>
-              <h1 class="font-headline-lg mb-1" style="font-family: var(--font-head); font-size: 32px; font-weight: 700; color: var(--navy); line-height: 1.1;">{{ product.name }}</h1>
-              <p class="font-body-md mb-3" style="color: var(--gray700); opacity: 0.85; font-size: 14px; margin-bottom: 16px;">{{ product.desc }}</p>
+              <span class="badge bg-danger font-label-md py-1 px-3 text-white text-uppercase tracking-wider mb-2 spec-badge">DOKUMEN TEKNIS #0{{ productId + 1 }}</span>
+              <h1 class="font-headline-lg mb-1 spec-title">{{ product.name }}</h1>
+              <p class="font-body-md mb-3 spec-desc">{{ product.desc }}</p>
 
               <!-- Technical Parameter Cards Grid -->
-              <div class="row g-2 mb-3 param-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-                <div class="p-2.5 rounded-xl" style="background: var(--gray50); border: 1px solid var(--gray100); padding: 12px; border-radius: 4px;">
-                  <span class="font-label-md" style="display: block; font-size: 9px; color: var(--gray500); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">KELAS TOLERANSI</span>
-                  <span class="fs-5 fw-bold" style="display: block; font-size: 14px; font-weight: 700; color: var(--navy);">{{ getToleranceVal(productId) }}</span>
+              <div class="row g-2 mb-3 param-grid">
+                <div class="p-2.5 rounded-xl param-card">
+                  <span class="font-label-md param-label">KELAS TOLERANSI</span>
+                  <span class="fs-5 fw-bold param-val">{{ getToleranceVal(productId) }}</span>
                 </div>
-                <div class="p-2.5 rounded-xl" style="background: var(--gray50); border: 1px solid var(--gray100); padding: 12px; border-radius: 4px;">
-                  <span class="font-label-md" style="display: block; font-size: 9px; color: var(--gray500); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">KAPASITAS TEKAN</span>
-                  <span class="fs-5 fw-bold" style="display: block; font-size: 14px; font-weight: 700; color: var(--navy);">{{ getCapacityVal(productId) }}</span>
+                <div class="p-2.5 rounded-xl param-card">
+                  <span class="font-label-md param-label">KAPASITAS TEKAN</span>
+                  <span class="fs-5 fw-bold param-val">{{ getCapacityVal(productId) }}</span>
                 </div>
-                <div class="p-2.5 rounded-xl" style="background: var(--gray50); border: 1px solid var(--gray100); padding: 12px; border-radius: 4px;">
-                  <span class="font-label-md" style="display: block; font-size: 9px; color: var(--gray500); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">SPEED RATE (STROKES)</span>
-                  <span class="fs-5 fw-bold" style="display: block; font-size: 14px; font-weight: 700; color: var(--navy);">{{ getSpeedVal(productId) }}</span>
+                <div class="p-2.5 rounded-xl param-card">
+                  <span class="font-label-md param-label">SPEED RATE (STROKES)</span>
+                  <span class="fs-5 fw-bold param-val">{{ getSpeedVal(productId) }}</span>
                 </div>
-                <div class="p-2.5 rounded-xl" style="background: var(--gray50); border: 1px solid var(--gray100); padding: 12px; border-radius: 4px;">
-                  <span class="font-label-md" style="display: block; font-size: 9px; color: var(--gray500); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 2px;">VOLUME PRODUKSI</span>
-                  <span class="fs-5 fw-bold" style="display: block; font-size: 14px; font-weight: 700; color: var(--navy);">{{ getVolumeVal(productId) }}</span>
+                <div class="p-2.5 rounded-xl param-card">
+                  <span class="font-label-md param-label">VOLUME PRODUKSI</span>
+                  <span class="fs-5 fw-bold param-val">{{ getVolumeVal(productId) }}</span>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Right Side: Graphic Schema Drafting Overlay -->
-          <div class="technical-blueprint-grid rounded-xl p-3 position-relative overflow-hidden" style="background: var(--gray50); border: 1px solid var(--gray100); border-radius: 6px; padding: 24px; height: 100%; min-height: 320px; display: flex; flex-direction: column; justify-content: space-between;">
+          <div class="technical-blueprint-grid rounded-xl p-3 position-relative overflow-hidden">
             <div class="blueprint-lines-overlay"></div>
             
             <div class="position-relative z-1 d-flex justify-content-between align-items-center">
               <div class="text-start">
-                <span class="font-label-md d-block" style="font-size: 10px; font-weight: 700; color: var(--navy); letter-spacing: 0.5px;">CROSS-SECTION SCHEMA</span>
-                <span class="font-body-sm text-secondary" style="font-size: 9px; color: var(--gray500);">Tolerances calibrated to ±0.01mm</span>
+                <span class="font-label-md d-block schema-label">CROSS-SECTION SCHEMA</span>
+                <span class="font-body-sm text-secondary schema-sub">Tolerances calibrated to ±0.01mm</span>
               </div>
               <div class="metrology-indicator-dot-blue pulse"></div>
             </div>
             
-            <div class="blueprint-vector-graphic my-2 py-1 text-center position-relative z-1" style="display: flex; align-items: center; justify-content: center; min-height: 140px;">
-              <i :class="['ti', product.icon || 'ti-hammer']" style="font-size: 90px; color: var(--accent); opacity: 0.85;"></i>
+            <div class="blueprint-vector-graphic my-2 py-1 text-center position-relative z-1">
+              <i :class="['ti', product.icon || 'ti-hammer']" class="schema-icon"></i>
             </div>
             
-            <div class="d-flex justify-content-between font-label-md text-secondary mt-1 pt-1 position-relative z-1" style="border-top: 1px solid rgba(15, 42, 66, 0.1); font-size: 10px; color: var(--gray500);">
+            <div class="d-flex justify-content-between font-label-md text-secondary mt-1 pt-1 position-relative z-1 schema-footer">
               <span>SYS_REF: CSA-SPEC-0{{ productId + 1 }}</span>
               <span>STATUS: CERTIFIED</span>
             </div>
@@ -76,54 +76,54 @@
         </div>
 
         <!-- Advanced Technical Profile Sheet -->
-        <h3 style="font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--navy); margin-bottom: 16px; border-bottom: 1px solid rgba(15, 42, 66, 0.1); padding-bottom: 6px;">Sub-Micron Engineering Profile</h3>
+        <h3 class="profile-section-title">Sub-Micron Engineering Profile</h3>
         
-        <div class="row g-3 mb-4 profile-cards-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 32px;">
+        <div class="row g-3 mb-4 profile-cards-grid">
           
-          <div class="p-3.5 rounded-3xl engineering-profile-card" style="padding: 20px;">
-            <div class="d-flex align-items-center gap-3 mb-2" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-              <div class="spec-icon-box" style="color: var(--accent);"><i class="ti ti-settings fs-4" style="font-size: 18px;"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0" style="font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--navy);">Sistem Pendukung (Auxiliary)</h4>
+          <div class="p-3.5 rounded-3xl engineering-profile-card">
+            <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
+              <div class="spec-icon-box"><i class="ti ti-settings fs-4 profile-icon"></i></div>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Sistem Pendukung (Auxiliary)</h4>
             </div>
-            <p class="font-body-sm text-secondary opacity-75 mb-0" style="font-size: 12.5px; line-height: 1.5; color: var(--gray700);">
+            <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getAuxiliary(productId) }}
             </p>
           </div>
 
-          <div class="p-3.5 rounded-3xl engineering-profile-card" style="padding: 20px;">
-            <div class="d-flex align-items-center gap-3 mb-2" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-              <div class="spec-icon-box" style="color: var(--accent);"><i class="ti ti-shield-check fs-4" style="font-size: 18px;"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0" style="font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--navy);">Keamanan & Sensor</h4>
+          <div class="p-3.5 rounded-3xl engineering-profile-card">
+            <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
+              <div class="spec-icon-box"><i class="ti ti-shield-check fs-4 profile-icon"></i></div>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Keamanan & Sensor</h4>
             </div>
-            <p class="font-body-sm text-secondary opacity-75 mb-0" style="font-size: 12.5px; line-height: 1.5; color: var(--gray700);">
+            <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getSafety(productId) }}
             </p>
           </div>
 
-          <div class="p-3.5 rounded-3xl engineering-profile-card" style="padding: 20px;">
-            <div class="d-flex align-items-center gap-3 mb-2" style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-              <div class="spec-icon-box" style="color: var(--accent);"><i class="ti ti-packages fs-4" style="font-size: 18px;"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0" style="font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--navy);">Aplikasi Produk</h4>
+          <div class="p-3.5 rounded-3xl engineering-profile-card">
+            <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
+              <div class="spec-icon-box"><i class="ti ti-packages fs-4 profile-icon"></i></div>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Aplikasi Produk</h4>
             </div>
-            <p class="font-body-sm text-secondary opacity-75 mb-0" style="font-size: 12.5px; line-height: 1.5; color: var(--gray700);">
+            <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getTypical(productId) }}
             </p>
           </div>
         </div>
 
         <!-- Action Footer Stamping CTA (Redesigned to Professional Light Theme) -->
-        <div class="rounded-3xl text-center position-relative overflow-hidden" style="background: var(--gray50); border: 1px solid var(--gray100); border-radius: 6px; padding: 36px; text-align: center; color: var(--navy); margin-bottom: 32px; box-shadow: 0 4px 20px rgba(15, 42, 66, 0.02);">
-          <div class="blueprint-grid-overlay" style="opacity: 0.04;"></div>
-          <div class="position-relative z-1" style="max-width: 700px; margin: 0 auto;">
-            <h3 class="font-headline-md mb-2" style="font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--navy);">Need Custom Stamping Consultation?</h3>
-            <p class="font-body-md mb-3" style="font-size: 14px; margin-bottom: 16px; color: var(--gray700); opacity: 0.9;">
+        <div class="rounded-3xl text-center position-relative overflow-hidden cta-container">
+          <div class="blueprint-grid-overlay cta-overlay"></div>
+          <div class="position-relative z-1 cta-content-wrapper">
+            <h3 class="font-headline-md mb-2 cta-title">Need Custom Stamping Consultation?</h3>
+            <p class="font-body-md mb-3 cta-desc">
               Send your inquiries or product technical drawing blueprints directly to our engineering estimation team. We are ready to provide the right DFM (Design for Manufacturing) solutions tailored to your needs.
             </p>
-            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 16px;">
-              <router-link to="/contact" class="btn-primary-dark" style="padding: 10px 24px; font-size: 12.5px; text-decoration: none;">
+            <div class="cta-actions">
+              <router-link to="/contact" class="btn-primary-dark cta-btn-email">
                 <i class="ti ti-mail me-2"></i> Send Inquiry (Email)
               </router-link>
-              <a :href="waUrl" target="_blank" class="btn-whatsapp" style="padding: 12px 28px; font-size: 13px; text-decoration: none;">
+              <a :href="waUrl" target="_blank" class="btn-whatsapp cta-btn-wa">
                 <i class="ti ti-brand-whatsapp me-2"></i> Chat via WhatsApp
               </a>
             </div>
@@ -469,14 +469,224 @@ export default {
   animation: spin 1s linear infinite;
 }
 
+/* Extracted Inline Styles */
+.empty-state-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+.empty-state-title {
+  font-family: var(--font-head);
+  font-size: 32px;
+}
+.main-spec-container {
+  max-width: 1600px;
+  margin: 0 auto;
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+.spec-blueprint-canvas {
+  background: var(--white);
+  border: 1px solid rgba(15, 42, 66, 0.12);
+  box-shadow: 0 10px 30px rgba(15, 42, 66, 0.05);
+  border-radius: 6px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.spec-badge {
+  background: var(--accent) !important;
+  padding: 4px 10px;
+  border-radius: 2px;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  display: inline-block;
+}
+.spec-title {
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--navy);
+  line-height: 1.1;
+}
+.spec-desc {
+  color: var(--gray700);
+  opacity: 0.85;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+.param-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.param-card {
+  background: var(--gray50);
+  border: 1px solid var(--gray100);
+  padding: 12px;
+  border-radius: 4px;
+}
+.param-label {
+  display: block;
+  font-size: 9px;
+  color: var(--gray500);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+.param-val {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.technical-blueprint-grid {
+  background: var(--gray50);
+  border: 1px solid var(--gray100);
+  border-radius: 6px;
+  padding: 24px;
+  height: 100%;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.schema-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.5px;
+}
+.schema-sub {
+  font-size: 9px;
+  color: var(--gray500);
+}
+.blueprint-vector-graphic {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 140px;
+}
+.schema-icon {
+  font-size: 90px;
+  color: var(--accent);
+  opacity: 0.85;
+}
+.schema-footer {
+  border-top: 1px solid rgba(15, 42, 66, 0.1);
+  font-size: 10px;
+  color: var(--gray500);
+}
+.profile-section-title {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 16px;
+  border-bottom: 1px solid rgba(15, 42, 66, 0.1);
+  padding-bottom: 6px;
+}
+.profile-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.engineering-profile-card {
+  background: var(--white);
+  border: 1px solid rgba(15, 42, 66, 0.1);
+  box-shadow: 0 4px 20px rgba(15, 42, 66, 0.03);
+  border-radius: 6px;
+  padding: 20px;
+  transition: all 0.2s ease;
+}
+.profile-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.spec-icon-box {
+  color: var(--accent);
+}
+.profile-icon {
+  font-size: 18px;
+}
+.profile-card-title {
+  font-family: var(--font-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.profile-card-desc {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--gray700);
+}
+.cta-container {
+  background: var(--gray50);
+  border: 1px solid var(--gray100);
+  border-radius: 6px;
+  padding: 36px;
+  text-align: center;
+  color: var(--navy);
+  margin-bottom: 32px;
+  box-shadow: 0 4px 20px rgba(15, 42, 66, 0.02);
+}
+.cta-overlay {
+  opacity: 0.04;
+}
+.cta-content-wrapper {
+  max-width: 700px;
+  margin: 0 auto;
+}
+.cta-title {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+}
+.cta-desc {
+  font-size: 14px;
+  margin-bottom: 16px;
+  color: var(--gray700);
+  opacity: 0.9;
+}
+.cta-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 16px;
+}
+.cta-btn-email {
+  padding: 10px 24px;
+  font-size: 12.5px;
+  text-decoration: none;
+}
+.cta-btn-wa {
+  padding: 12px 28px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
 /* Responsive Overrides */
 @media (max-width: 900px) {
   .detail-page-wrapper {
-    padding-top: 100px !important;
+    padding: 90px 16px 32px !important;
   }
   .detail-grid {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
+  }
+  .spec-blueprint-canvas, .technical-blueprint-grid {
+    padding: 20px;
   }
   .profile-cards-grid {
     grid-template-columns: 1fr !important;
