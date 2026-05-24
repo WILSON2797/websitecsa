@@ -27,6 +27,7 @@ class CmsController extends Controller
         $mapped['machines_list'] = Machine::orderBy('id', 'asc')->get();
         $mapped['clients_list'] = Client::orderBy('id', 'asc')->get();
         $mapped['facilities_list'] = \App\Models\Facility::orderBy('id', 'asc')->get();
+        $mapped['galleries_list'] = \App\Models\Gallery::orderBy('display_order', 'asc')->get();
 
         return response()->json($mapped);
     }

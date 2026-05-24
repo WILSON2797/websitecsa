@@ -15,6 +15,7 @@ import Facilities from '../components/LandingPage/Facilities.vue';
 
 export default {
   name: 'FacilitiesPage',
+  emits: ['update-active-section'],
   components: {
     Facilities
   },
@@ -25,7 +26,7 @@ export default {
       default: () => ({})
     }
   },
-  setup() {
+  setup(props, { emit }) {
     let observer = null;
 
     const initScrollObservers = () => {
@@ -42,6 +43,7 @@ export default {
 
     onMounted(() => {
       window.scrollTo(0, 0);
+      emit('update-active-section', 'facilities');
       setTimeout(initScrollObservers, 100);
     });
 

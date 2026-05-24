@@ -26,6 +26,10 @@
         <i class="ti ti-certificate"></i>
         <span v-if="!collapsed">Sertifikat</span>
       </router-link>
+      <router-link to="/admin/galleries" class="nav-item" active-class="active">
+        <i class="ti ti-photo"></i>
+        <span v-if="!collapsed">Galeri</span>
+      </router-link>
       <router-link to="/admin/clients" class="nav-item" active-class="active">
         <i class="ti ti-users"></i>
         <span v-if="!collapsed">Klien</span>

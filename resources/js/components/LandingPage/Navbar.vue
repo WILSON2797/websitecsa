@@ -16,6 +16,7 @@
         <router-link to="/facilities" :class="{ 'active': activeSection === 'facilities' }">Fasilitas</router-link>
         <router-link to="/quality" :class="{ 'active': activeSection === 'quality' }">Kualitas</router-link>
         <router-link to="/clients" :class="{ 'active': activeSection === 'clients' }">Klien</router-link>
+        <router-link to="/documentation" :class="{ 'active': activeSection === 'documentation' }">Dokumentasi</router-link>
         <router-link to="/contact" :class="{ 'active': activeSection === 'contact' }">Kontak</router-link>
       </div>
       <router-link class="nav-quote" to="/contact">Request Quote</router-link>

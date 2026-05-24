@@ -23,6 +23,8 @@ const AdminClients = () => import('./views/admin/AdminClients.vue');
 const AdminCertificates = () => import('./views/admin/AdminCertificates.vue');
 const AdminCms = () => import('./views/admin/AdminCms.vue');
 const AdminInquiries = () => import('./views/admin/AdminInquiries.vue');
+const AdminGalleries = () => import('./views/admin/AdminGalleries.vue');
+const DocumentationPage = () => import('./views/DocumentationPage.vue');
 
 const routes = [
   // Public Routes
@@ -34,6 +36,7 @@ const routes = [
   { path: '/quality', name: 'QualityPage', component: QualityPage },
   { path: '/clients', name: 'ClientsPage', component: ClientsPage },
   { path: '/contact', name: 'ContactPage', component: ContactPage },
+  { path: '/documentation', name: 'DocumentationPage', component: DocumentationPage },
   { path: '/product/:id', name: 'ProductDetail', component: ProductDetail },
   { path: '/machine/:id', name: 'MachineDetail', component: MachineDetail },
   { path: '/facility/:id', name: 'FacilityDetail', component: () => import('./views/FacilityDetail.vue') },
@@ -51,6 +54,7 @@ const routes = [
       { path: 'facilities', name: 'AdminFacilities', component: AdminFacilities },
       { path: 'clients', name: 'AdminClients', component: AdminClients },
       { path: 'certificates', name: 'AdminCertificates', component: AdminCertificates },
+      { path: 'galleries', name: 'AdminGalleries', component: AdminGalleries },
       { path: 'cms', name: 'AdminCms', component: AdminCms },
       { path: 'inquiries', name: 'AdminInquiries', component: AdminInquiries },
     ]

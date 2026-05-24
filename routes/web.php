@@ -49,6 +49,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/admin/cms', [\App\Http\Controllers\Admin\CmsController::class, 'index']);
     Route::post('/api/admin/cms', [\App\Http\Controllers\Admin\CmsController::class, 'updateBatch']);
     Route::get('/api/admin/inquiries', [\App\Http\Controllers\Admin\ContactInquiryController::class, 'index']);
+
+    // Galleries
+    Route::get('/api/admin/galleries', [\App\Http\Controllers\Admin\GalleryController::class, 'index']);
+    Route::post('/api/admin/galleries', [\App\Http\Controllers\Admin\GalleryController::class, 'store']);
+    Route::put('/api/admin/galleries/{id}', [\App\Http\Controllers\Admin\GalleryController::class, 'update']);
+    Route::delete('/api/admin/galleries/{id}', [\App\Http\Controllers\Admin\GalleryController::class, 'destroy']);
 });
 
 // Public API endpoints (read-only for entities)
@@ -57,6 +63,7 @@ Route::get('/api/machines', [\App\Http\Controllers\Admin\MachineController::clas
 Route::get('/api/clients', [\App\Http\Controllers\Admin\ClientController::class, 'index']);
 Route::get('/api/certificates', [\App\Http\Controllers\Admin\CertificateController::class, 'index']);
 Route::get('/api/facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'index']);
+Route::get('/api/galleries', [\App\Http\Controllers\Admin\GalleryController::class, 'index']);
 
 // SPA catch-all route (excludes API routes)
 Route::get('/{any}', function () {
