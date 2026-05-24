@@ -8,51 +8,13 @@
     </div>
 
     <div class="admin-card">
-      <div class="admin-table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Gambar</th>
-              <th>Nama & Tag</th>
-              <th>Toleransi</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading">
-              <td colspan="5" style="text-align: center;">Loading...</td>
-            </tr>
-            <tr v-else-if="products.length === 0">
-              <td colspan="5" style="text-align: center;">Belum ada produk.</td>
-            </tr>
-            <tr v-for="item in products" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>
-                <img v-if="item.img" :src="item.img" alt="product image" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
-                <div v-else style="width: 50px; height: 50px; background: #eee; display:flex; align-items:center; justify-content:center; border-radius: 4px;">
-                  <i :class="item.icon || 'ti ti-box'"></i>
-                </div>
-              </td>
-              <td>
-                <strong>{{ item.name }}</strong><br>
-                <small class="text-muted">{{ item.tag }}</small>
-              </td>
-              <td>{{ item.tolerance || '-' }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-edit" @click="openModal(item)">
-                    <i class="ti ti-pencil"></i> Edit
-                  </button>
-                  <button class="btn-danger" @click="deleteItem(item.id)">
-                    <i class="ti ti-trash"></i> Hapus
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        :data="products"
+        :columns="columns"
+        :pagination="pagination"
+        :loading="loading"
+        @page-change="loadData"
+      />
     </div>
 
     <!-- Modal Form -->
@@ -125,8 +87,13 @@
             <div class="form-group half">
               <label>Gambar Produk</label>
               <input type="file" @change="handleFileUpload" class="form-control" accept="image/*">
-              <div v-if="form.previewImg" style="margin-top:10px;">
-                <img :src="form.previewImg" alt="Preview" style="max-height: 80px; border-radius: 4px;">
+              <div v-if="form.previewImg" style="margin-top:15px; display: flex; align-items: flex-start;">
+                <div style="position: relative; display: inline-block; width: max-content;">
+                  <img :src="form.previewImg" alt="Preview" style="max-height: 80px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; display: block;">
+                  <button type="button" @click="removeImage" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -144,22 +111,107 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
 import Swal from 'sweetalert2';
 import IconPicker from '../../components/Admin/IconPicker.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
   name: 'AdminProducts',
   components: {
-    IconPicker
+    IconPicker,
+    DataTable
   },
   setup() {
     const products = ref([]);
+    const pagination = ref(null);
     const loading = ref(true);
     const saving = ref(false);
     const showModal = ref(false);
+
+    const columns = [
+      {
+        id: 'no',
+        header: 'No',
+        meta: { width: '60px', noSearch: true },
+        cell: ({ row }) => {
+          const from = pagination.value?.from || 1;
+          return from + row.index;
+        }
+      },
+      {
+        accessorKey: 'img',
+        header: 'Gambar',
+        meta: { width: '100px' },
+        cell: ({ row }) => {
+          const item = row.original;
+          if (item.img) {
+            return h('img', {
+              src: item.img,
+              alt: 'product image',
+              style: { width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }
+            });
+          } else {
+            return h('div', {
+              style: {
+                width: '50px',
+                height: '50px',
+                background: '#eee',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '4px'
+              }
+            }, [
+              h('i', { class: item.icon || 'ti ti-box' })
+            ]);
+          }
+        }
+      },
+      {
+        accessorKey: 'name',
+        header: 'Nama & Tag',
+        cell: ({ row }) => {
+          const item = row.original;
+          return h('div', {}, [
+            h('strong', {}, item.name),
+            h('br'),
+            h('small', { class: 'text-muted' }, item.tag)
+          ]);
+        }
+      },
+      {
+        accessorKey: 'tolerance',
+        header: 'Toleransi',
+        cell: ({ row }) => row.original.tolerance || '-'
+      },
+      {
+        id: 'actions',
+        header: 'Action',
+        meta: { width: '100px', noSearch: true },
+        cell: ({ row }) => {
+          const item = row.original;
+          return h('div', { class: 'action-buttons' }, [
+            h('button', {
+              class: 'btn-edit',
+              title: 'Edit',
+              onClick: () => openModal(item)
+            }, [
+              h('i', { class: 'ti ti-pencil' })
+            ]),
+            h('button', {
+              class: 'btn-danger',
+              title: 'Hapus',
+              onClick: () => deleteItem(item.id)
+            }, [
+              h('i', { class: 'ti ti-trash' })
+            ])
+          ]);
+        }
+      }
+    ];
     
     const defaultForm = {
       id: null,
@@ -180,11 +232,19 @@ export default {
 
     const form = ref({ ...defaultForm });
 
-    const loadData = async () => {
+    const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get('/api/admin/products');
-        products.value = res.data;
+        const res = await axios.get(`/api/admin/products?page=${page}`);
+        products.value = res.data.data;
+        pagination.value = {
+          current_page: res.data.current_page,
+          last_page: res.data.last_page,
+          total: res.data.total,
+          per_page: res.data.per_page,
+          from: res.data.from,
+          to: res.data.to
+        };
       } catch (err) {
         console.error(err);
       } finally {
@@ -194,9 +254,9 @@ export default {
 
     const openModal = (item = null) => {
       if (item) {
-        form.value = { ...item, imgFile: null, previewImg: item.img };
+        form.value = { ...item, imgFile: null, previewImg: item.img, remove_img: 0 };
       } else {
-        form.value = { ...defaultForm };
+        form.value = { ...defaultForm, remove_img: 0 };
       }
       showModal.value = true;
     };
@@ -230,18 +290,37 @@ export default {
       }
     };
 
+    const removeImage = () => {
+      form.value.imgFile = null;
+      form.value.previewImg = '';
+      form.value.remove_img = 1;
+      // reset file input
+      const fileInput = document.querySelector('input[type="file"]');
+      if (fileInput) fileInput.value = '';
+    };
+
     const saveItem = async () => {
       saving.value = true;
       try {
         const formData = new FormData();
         Object.keys(form.value).forEach(key => {
-          if (key !== 'imgFile' && key !== 'previewImg' && form.value[key] !== null) {
-            formData.append(key, form.value[key]);
+          if (key !== 'imgFile' && key !== 'previewImg' && key !== 'img' && key !== 'remove_img' && form.value[key] !== null) {
+            if (Array.isArray(form.value[key])) {
+              // Appending an array requires multiple appends with [] syntax for Laravel
+              form.value[key].forEach(item => {
+                formData.append(`${key}[]`, item);
+              });
+            } else {
+              formData.append(key, form.value[key]);
+            }
           }
         });
 
         if (form.value.imgFile) {
           formData.append('img', form.value.imgFile);
+        }
+        if (form.value.remove_img) {
+          formData.append('remove_img', 1);
         }
 
         if (form.value.id) {
@@ -256,7 +335,15 @@ export default {
         Swal.fire('Sukses', 'Data produk berhasil disimpan.', 'success');
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Gagal menyimpan data.', 'error');
+        let errorMsg = 'Gagal menyimpan data.';
+        if (err.response && err.response.data && err.response.data.message) {
+          errorMsg = err.response.data.message;
+          if (err.response.data.errors) {
+            const firstError = Object.values(err.response.data.errors)[0][0];
+            errorMsg += ': ' + firstError;
+          }
+        }
+        Swal.fire('Error', errorMsg, 'error');
       } finally {
         saving.value = false;
       }
@@ -291,8 +378,8 @@ export default {
     });
 
     return {
-      products, loading, saving, showModal, form,
-      openModal, closeModal, handleFileUpload, saveItem, deleteItem
+      products, loading, saving, showModal, form, columns, pagination,
+      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem
     };
   }
 }

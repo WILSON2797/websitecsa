@@ -8,48 +8,13 @@
     </div>
 
     <div class="admin-card">
-      <div class="admin-table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Logo</th>
-              <th>Nama Perusahaan</th>
-              <th>Industri</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading">
-              <td colspan="5" style="text-align: center;">Loading...</td>
-            </tr>
-            <tr v-else-if="clients.length === 0">
-              <td colspan="5" style="text-align: center;">Belum ada klien.</td>
-            </tr>
-            <tr v-for="item in clients" :key="item.id">
-              <td>{{ item.id }}</td>
-              <td>
-                <img v-if="item.logo_path" :src="item.logo_path" alt="logo" style="max-width: 60px; max-height: 40px; object-fit: contain;">
-                <div v-else style="width: 40px; height: 40px; background: #eee; display:flex; align-items:center; justify-content:center; border-radius: 4px;">
-                  <i class="ti ti-building-factory-2"></i>
-                </div>
-              </td>
-              <td><strong>{{ item.name }}</strong></td>
-              <td>{{ item.industry }}</td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-edit" @click="openModal(item)">
-                    <i class="ti ti-pencil"></i> Edit
-                  </button>
-                  <button class="btn-danger" @click="deleteItem(item.id)">
-                    <i class="ti ti-trash"></i> Hapus
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        :data="clients"
+        :columns="columns"
+        :pagination="pagination"
+        :loading="loading"
+        @page-change="loadData"
+      />
     </div>
 
     <!-- Modal Form -->
@@ -71,13 +36,18 @@
             <input type="text" v-model="form.industry" required class="form-control" placeholder="Otomotif">
           </div>
 
-          <div class="form-group">
-            <label>Logo Klien</label>
-            <input type="file" @change="handleFileUpload" class="form-control" accept="image/*">
-            <div v-if="form.previewImg" style="margin-top:10px; background: #f9fafb; padding: 10px; border-radius: 4px; text-align: center;">
-              <img :src="form.previewImg" alt="Preview" style="max-height: 60px; max-width: 100%; object-fit: contain;">
+            <div class="form-group">
+              <label>Logo Klien</label>
+              <input type="file" @change="handleFileUpload" class="form-control" accept="image/*">
+              <div v-if="form.previewImg" style="margin-top:15px; display: flex; align-items: flex-start; justify-content: center; background: #f9fafb; padding: 15px; border-radius: 4px;">
+                <div style="position: relative; display: inline-block; width: max-content;">
+                  <img :src="form.previewImg" alt="Preview" style="max-height: 60px; max-width: 100%; object-fit: contain; display: block; border-radius: 4px;">
+                  <button type="button" @click="removeImage" style="position: absolute; top: -10px; right: -10px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
 
           <div class="modal-footer">
             <button type="button" class="btn-cancel" @click="closeModal">Batal</button>
@@ -92,18 +62,97 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
 import imageCompression from 'browser-image-compression';
 import Swal from 'sweetalert2';
+import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
   name: 'AdminClients',
+  components: {
+    DataTable
+  },
   setup() {
     const clients = ref([]);
+    const pagination = ref(null);
     const loading = ref(true);
     const saving = ref(false);
     const showModal = ref(false);
+
+    const columns = [
+      {
+        id: 'no',
+        header: 'No',
+        meta: { width: '60px', noSearch: true },
+        cell: ({ row }) => {
+          const from = pagination.value?.from || 1;
+          return from + row.index;
+        }
+      },
+      {
+        accessorKey: 'logo_path',
+        header: 'Logo',
+        meta: { width: '100px' },
+        cell: ({ row }) => {
+          const item = row.original;
+          if (item.logo_path) {
+            return h('img', {
+              src: item.logo_path,
+              alt: 'logo',
+              style: { maxWidth: '60px', maxHeight: '40px', objectFit: 'contain' }
+            });
+          } else {
+            return h('div', {
+              style: {
+                width: '40px',
+                height: '40px',
+                background: '#eee',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '4px'
+              }
+            }, [
+              h('i', { class: 'ti ti-building-factory-2' })
+            ]);
+          }
+        }
+      },
+      {
+        accessorKey: 'name',
+        header: 'Nama Perusahaan',
+        cell: ({ row }) => h('strong', {}, row.original.name)
+      },
+      {
+        accessorKey: 'industry',
+        header: 'Industri'
+      },
+      {
+        id: 'actions',
+        header: 'Action',
+        meta: { width: '100px', noSearch: true },
+        cell: ({ row }) => {
+          const item = row.original;
+          return h('div', { class: 'action-buttons' }, [
+            h('button', {
+              class: 'btn-edit',
+              title: 'Edit',
+              onClick: () => openModal(item)
+            }, [
+              h('i', { class: 'ti ti-pencil' })
+            ]),
+            h('button', {
+              class: 'btn-danger',
+              title: 'Hapus',
+              onClick: () => deleteItem(item.id)
+            }, [
+              h('i', { class: 'ti ti-trash' })
+            ])
+          ]);
+        }
+      }
+    ];
     
     const defaultForm = {
       id: null,
@@ -115,11 +164,19 @@ export default {
 
     const form = ref({ ...defaultForm });
 
-    const loadData = async () => {
+    const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get('/api/admin/clients');
-        clients.value = res.data;
+        const res = await axios.get(`/api/admin/clients?page=${page}`);
+        clients.value = res.data.data;
+        pagination.value = {
+          current_page: res.data.current_page,
+          last_page: res.data.last_page,
+          total: res.data.total,
+          per_page: res.data.per_page,
+          from: res.data.from,
+          to: res.data.to
+        };
       } catch (err) {
         console.error(err);
       } finally {
@@ -127,14 +184,14 @@ export default {
       }
     };
 
-    const openModal = (item = null) => {
-      if (item) {
-        form.value = { ...item, imgFile: null, previewImg: item.logo_path };
-      } else {
-        form.value = { ...defaultForm };
-      }
-      showModal.value = true;
-    };
+      const openModal = (item = null) => {
+        if (item) {
+          form.value = { ...item, imgFile: null, previewImg: item.logo_path, remove_img: 0 };
+        } else {
+          form.value = { ...defaultForm, remove_img: 0 };
+        }
+        showModal.value = true;
+      };
 
     const closeModal = () => {
       showModal.value = false;
@@ -158,25 +215,36 @@ export default {
           const compressedFile = await imageCompression(file, options);
           form.value.imgFile = compressedFile;
           form.value.previewImg = URL.createObjectURL(compressedFile);
-        } catch (error) {
-          console.error('Compression error:', error);
-          Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
+          } catch (error) {
+            console.error('Compression error:', error);
+            Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
+          }
         }
-      }
-    };
+      };
 
-    const saveItem = async () => {
+      const removeImage = () => {
+        form.value.imgFile = null;
+        form.value.previewImg = '';
+        form.value.remove_img = 1;
+        const fileInput = document.querySelector('input[type="file"]');
+        if (fileInput) fileInput.value = '';
+      };
+
+      const saveItem = async () => {
       saving.value = true;
       try {
         const formData = new FormData();
         formData.append('name', form.value.name);
         formData.append('industry', form.value.industry);
 
-        if (form.value.imgFile) {
-          formData.append('logo_path', form.value.imgFile);
-        }
+          if (form.value.imgFile) {
+            formData.append('logo_path', form.value.imgFile);
+          }
+          if (form.value.remove_img) {
+            formData.append('remove_img', 1);
+          }
 
-        if (form.value.id) {
+          if (form.value.id) {
           formData.append('_method', 'PUT');
           await axios.post(`/api/admin/clients/${form.value.id}`, formData);
         } else {
@@ -188,7 +256,15 @@ export default {
         Swal.fire('Sukses', 'Data klien berhasil disimpan.', 'success');
       } catch (err) {
         console.error(err);
-        Swal.fire('Error', 'Gagal menyimpan data.', 'error');
+        let errorMsg = 'Gagal menyimpan data.';
+        if (err.response && err.response.data && err.response.data.message) {
+          errorMsg = err.response.data.message;
+          if (err.response.data.errors) {
+            const firstError = Object.values(err.response.data.errors)[0][0];
+            errorMsg += ': ' + firstError;
+          }
+        }
+        Swal.fire('Error', errorMsg, 'error');
       } finally {
         saving.value = false;
       }
@@ -222,10 +298,10 @@ export default {
       loadData();
     });
 
-    return {
-      clients, loading, saving, showModal, form,
-      openModal, closeModal, handleFileUpload, saveItem, deleteItem
-    };
+      return {
+        clients, loading, saving, showModal, form, columns, pagination,
+        openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem
+      };
   }
 }
 </script>

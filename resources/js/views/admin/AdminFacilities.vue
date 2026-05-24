@@ -1,15 +1,15 @@
 <template>
   <div class="crud-page">
     <div class="admin-page-title">
-      Kelola Mesin
+      Kelola Fasilitas
       <button class="btn-primary" @click="openModal()">
-        <i class="ti ti-plus"></i> Tambah Mesin
+        <i class="ti ti-plus"></i> Tambah Fasilitas
       </button>
     </div>
 
     <div class="admin-card">
       <DataTable
-        :data="machines"
+        :data="facilities"
         :columns="columns"
         :pagination="pagination"
         :loading="loading"
@@ -21,52 +21,39 @@
     <div v-if="showModal" class="modal-overlay" @click.self="closeModal">
       <div class="modal-content">
         <div class="modal-header">
-          <h3>{{ form.id ? 'Edit Mesin' : 'Tambah Mesin Baru' }}</h3>
+          <h3>{{ form.id ? 'Edit Fasilitas' : 'Tambah Fasilitas Baru' }}</h3>
           <button class="close-btn" @click="closeModal">&times;</button>
         </div>
         
         <form @submit.prevent="saveItem" class="modal-body">
           <div class="form-row">
             <div class="form-group half">
-              <label>Nama Mesin *</label>
-              <input type="text" v-model="form.name" required class="form-control">
+              <label>Nama Fasilitas *</label>
+              <input type="text" v-model="form.name" required class="form-control" placeholder="e.g. Area Produksi">
             </div>
             <div class="form-group half">
-              <label>Spesifikasi Utama *</label>
-              <input type="text" v-model="form.spec" required class="form-control" placeholder="e.g. 110 - 200 Ton">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group half">
-              <label>Kuantitas (Qty) *</label>
-              <input type="number" v-model="form.qty" required min="0" class="form-control">
-            </div>
-            <div class="form-group half">
-              <label>Asal Negara / Merek (Origin)</label>
-              <input type="text" v-model="form.origin" class="form-control" placeholder="e.g. Jepang / Taiwan (AIDA)">
+              <label>Deskripsi Singkat</label>
+              <input type="text" v-model="form.short_desc" class="form-control" placeholder="Tampil di kartu beranda">
             </div>
           </div>
 
           <div class="form-group">
-            <label>Deskripsi Lengkap</label>
-            <textarea v-model="form.longDesc" class="form-control" rows="3"></textarea>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group half">
-              <label>Presisi (Precision)</label>
-              <input type="text" v-model="form.precision" class="form-control">
-            </div>
-            <div class="form-group half">
-              <label>Keamanan (Safety)</label>
-              <input type="text" v-model="form.safety" class="form-control">
-            </div>
+            <label>Deskripsi Lengkap (View Details)</label>
+            <textarea v-model="form.long_desc" class="form-control" rows="4"></textarea>
           </div>
 
           <div class="form-group">
-            <label>Aplikasi / Kegunaan (Application)</label>
-            <textarea v-model="form.application" class="form-control" rows="2"></textarea>
+            <label>Spesifikasi / Info Tambahan</label>
+            <div v-for="(line, index) in specLines" :key="index" style="display: flex; gap: 10px; margin-bottom: 10px;">
+              <input type="text" v-model="specLines[index].label" class="form-control" placeholder="Label (e.g. Luas Area)">
+              <input type="text" v-model="specLines[index].value" class="form-control" placeholder="Value (e.g. 500m2)">
+              <button type="button" @click="removeSpecLine(index)" class="btn-danger" style="padding: 10px; border-radius: 6px;" title="Hapus baris">
+                <i class="ti ti-trash"></i>
+              </button>
+            </div>
+            <button type="button" @click="addSpecLine" style="background: var(--gray100, #f3f4f6); color: #374151; border: 1px dashed #d1d5db; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; display: inline-flex; align-items: center; gap: 6px; width: 100%; justify-content: center;">
+              <i class="ti ti-plus"></i> Tambah Baris Spesifikasi
+            </button>
           </div>
 
           <div class="form-row">
@@ -75,7 +62,7 @@
               <IconPicker v-model="form.icon" />
             </div>
             <div class="form-group half">
-              <label>Gambar Mesin</label>
+              <label>Gambar Fasilitas</label>
               <input type="file" @change="handleFileUpload" class="form-control" accept="image/*">
               <div v-if="form.previewImg" style="margin-top:15px; display: flex; align-items: flex-start;">
                 <div style="position: relative; display: inline-block; width: max-content;">
@@ -109,17 +96,18 @@ import IconPicker from '../../components/Admin/IconPicker.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
-  name: 'AdminMachines',
+  name: 'AdminFacilities',
   components: {
     IconPicker,
     DataTable
   },
   setup() {
-    const machines = ref([]);
+    const facilities = ref([]);
     const pagination = ref(null);
     const loading = ref(true);
     const saving = ref(false);
     const showModal = ref(false);
+    const specLines = ref([{ label: '', value: '' }]);
 
     const columns = [
       {
@@ -140,7 +128,7 @@ export default {
           if (item.img) {
             return h('img', {
               src: item.img,
-              alt: 'machine image',
+              alt: 'facility image',
               style: { width: '50px', height: '50px', objectFit: 'cover', borderRadius: '4px' }
             });
           } else {
@@ -155,27 +143,22 @@ export default {
                 borderRadius: '4px'
               }
             }, [
-              h('i', { class: item.icon || 'ti ti-settings-2' })
+              h('i', { class: item.icon || 'ti ti-building' })
             ]);
           }
         }
       },
       {
         accessorKey: 'name',
-        header: 'Nama & Spek',
+        header: 'Nama Fasilitas',
         cell: ({ row }) => {
           const item = row.original;
           return h('div', {}, [
             h('strong', {}, item.name),
             h('br'),
-            h('small', { class: 'text-muted' }, item.spec)
+            h('small', { class: 'text-muted' }, item.short_desc)
           ]);
         }
-      },
-      {
-        accessorKey: 'qty',
-        header: 'Qty',
-        meta: { width: '80px' }
       },
       {
         id: 'actions',
@@ -206,16 +189,12 @@ export default {
     const defaultForm = {
       id: null,
       name: '',
-      spec: '',
-      qty: 0,
+      short_desc: '',
+      long_desc: '',
       icon: '',
       imgFile: null,
       previewImg: '',
-      longDesc: '',
-      origin: '',
-      precision: '',
-      safety: '',
-      application: ''
+      spec: ''
     };
 
     const form = ref({ ...defaultForm });
@@ -223,8 +202,8 @@ export default {
     const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get(`/api/admin/machines?page=${page}`);
-        machines.value = res.data.data;
+        const res = await axios.get(`/api/admin/facilities?page=${page}`);
+        facilities.value = res.data.data;
         pagination.value = {
           current_page: res.data.current_page,
           last_page: res.data.last_page,
@@ -243,10 +222,38 @@ export default {
     const openModal = (item = null) => {
       if (item) {
         form.value = { ...item, imgFile: null, previewImg: item.img, remove_img: 0 };
+        try {
+          const parsed = JSON.parse(item.spec);
+          specLines.value = Array.isArray(parsed) && parsed.length ? parsed : [{ label: '', value: '' }];
+        } catch (e) {
+          if (item.spec) {
+            specLines.value = item.spec.split('\n').map(line => {
+              const parts = line.split(':');
+              if (parts.length > 1) {
+                return { label: parts[0].trim(), value: parts.slice(1).join(':').trim() };
+              }
+              return { label: line.trim(), value: '' };
+            });
+          } else {
+            specLines.value = [{ label: '', value: '' }];
+          }
+        }
       } else {
         form.value = { ...defaultForm, remove_img: 0 };
+        specLines.value = [{ label: '', value: '' }];
       }
       showModal.value = true;
+    };
+
+    const addSpecLine = () => {
+      specLines.value.push({ label: '', value: '' });
+    };
+
+    const removeSpecLine = (index) => {
+      specLines.value.splice(index, 1);
+      if (specLines.value.length === 0) {
+        specLines.value.push({ label: '', value: '' });
+      }
     };
 
     const closeModal = () => {
@@ -290,6 +297,10 @@ export default {
     const saveItem = async () => {
       saving.value = true;
       try {
+        // Gabungkan specLines menjadi JSON string
+        const validSpecs = specLines.value.filter(line => line.label.trim() !== '' || line.value.trim() !== '');
+        form.value.spec = JSON.stringify(validSpecs);
+        
         const formData = new FormData();
         Object.keys(form.value).forEach(key => {
           if (key !== 'imgFile' && key !== 'previewImg' && key !== 'img' && key !== 'remove_img' && form.value[key] !== null) {
@@ -306,14 +317,14 @@ export default {
 
         if (form.value.id) {
           formData.append('_method', 'PUT');
-          await axios.post(`/api/admin/machines/${form.value.id}`, formData);
+          await axios.post(`/api/admin/facilities/${form.value.id}`, formData);
         } else {
-          await axios.post('/api/admin/machines', formData);
+          await axios.post('/api/admin/facilities', formData);
         }
 
         closeModal();
         loadData();
-        Swal.fire('Sukses', 'Data mesin berhasil disimpan.', 'success');
+        Swal.fire('Sukses', 'Data fasilitas berhasil disimpan.', 'success');
       } catch (err) {
         console.error(err);
         let errorMsg = 'Gagal menyimpan data.';
@@ -333,7 +344,7 @@ export default {
     const deleteItem = async (id) => {
       const result = await Swal.fire({
         title: 'Konfirmasi',
-        text: 'Yakin ingin menghapus mesin ini?',
+        text: 'Yakin ingin menghapus fasilitas ini?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#d33',
@@ -344,9 +355,9 @@ export default {
 
       if (result.isConfirmed) {
         try {
-          await axios.delete(`/api/admin/machines/${id}`);
+          await axios.delete(`/api/admin/facilities/${id}`);
           loadData();
-          Swal.fire('Terhapus!', 'Mesin telah dihapus.', 'success');
+          Swal.fire('Terhapus!', 'Fasilitas telah dihapus.', 'success');
         } catch (err) {
           console.error(err);
           Swal.fire('Error', 'Gagal menghapus data.', 'error');
@@ -359,8 +370,8 @@ export default {
     });
 
     return {
-      machines, loading, saving, showModal, form, columns, pagination,
-      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem
+      facilities, loading, saving, showModal, form, columns, pagination, specLines,
+      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem, addSpecLine, removeSpecLine
     };
   }
 }

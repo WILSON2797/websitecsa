@@ -60,7 +60,7 @@
             <!-- Photo Framed Inside the Card -->
             <div class="position-relative w-100" style="height: 180px; border-radius: 4px; overflow: hidden; border: 1px solid var(--gray100); margin-bottom: 12px;">
               <div class="blueprint-lines-overlay" style="opacity: 0.1; z-index: 2;"></div>
-              <img :src="getMachineImg(machineId)" style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1;" :alt="machine.name" />
+              <img :src="getMachineImg(machineId)" style="width: 100%; height: 100%; object-fit: cover; position: relative; z-index: 1;" :alt="machine.name" loading="lazy" decoding="async" />
             </div>
             
             <!-- Card Details below the photo -->

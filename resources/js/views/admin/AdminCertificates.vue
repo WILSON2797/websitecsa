@@ -8,49 +8,13 @@
     </div>
 
     <div class="admin-card">
-      <div class="admin-table-container">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Urutan</th>
-              <th>Gambar / Ikon</th>
-              <th>Nama Sertifikat</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-if="loading">
-              <td colspan="4" style="text-align: center;">Loading...</td>
-            </tr>
-            <tr v-else-if="certificates.length === 0">
-              <td colspan="4" style="text-align: center;">Belum ada sertifikat.</td>
-            </tr>
-            <tr v-for="item in certificates" :key="item.id">
-              <td>{{ item.order }}</td>
-              <td>
-                <img v-if="item.img" :src="item.img" alt="certificate image" style="width: 50px; height: 50px; object-fit: contain; border-radius: 4px; background: #fff; border: 1px solid #eee;">
-                <div v-else style="width: 50px; height: 50px; background: #eee; display:flex; align-items:center; justify-content:center; border-radius: 4px;">
-                  <i :class="['ti', item.icon || 'ti-certificate']"></i>
-                </div>
-              </td>
-              <td>
-                <strong>{{ item.name }}</strong><br>
-                <small class="text-muted">{{ item.desc || '-' }}</small>
-              </td>
-              <td>
-                <div class="action-buttons">
-                  <button class="btn-edit" @click="openModal(item)">
-                    <i class="ti ti-pencil"></i> Edit
-                  </button>
-                  <button class="btn-danger" @click="deleteItem(item.id)">
-                    <i class="ti ti-trash"></i> Hapus
-                  </button>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        :data="certificates"
+        :columns="columns"
+        :pagination="pagination"
+        :loading="loading"
+        @page-change="loadData"
+      />
     </div>
 
     <!-- Modal Form -->
@@ -84,8 +48,13 @@
               <input type="file" ref="fileInput" @change="handleFileChange" accept="image/*" class="form-control">
               <small class="text-muted">Maksimal 15MB. Akan dikompresi otomatis.</small>
               
-              <div v-if="imagePreview || form.img" class="mt-2">
-                <img :src="imagePreview || form.img" alt="Preview" style="max-height: 100px; border-radius: 4px; border: 1px solid #ddd; padding: 2px;">
+              <div v-if="imagePreview || form.img" class="mt-2" style="display: flex; align-items: flex-start;">
+                <div style="position: relative; display: inline-block; width: max-content;">
+                  <img :src="imagePreview || form.img" alt="Preview" style="max-height: 100px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; display: block;">
+                  <button type="button" @click="removeImage" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
               </div>
             </div>
             <div class="form-group half">
@@ -108,24 +77,104 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import IconPicker from '../../components/Admin/IconPicker.vue';
+import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
   name: 'AdminCertificates',
   components: {
-    IconPicker
+    IconPicker,
+    DataTable
   },
   setup() {
     const certificates = ref([]);
+    const pagination = ref(null);
     const loading = ref(true);
     const showModal = ref(false);
     const saving = ref(false);
     const fileInput = ref(null);
     const imageFile = ref(null);
     const imagePreview = ref(null);
+
+    const columns = [
+      {
+        id: 'no',
+        header: 'No',
+        meta: { width: '60px', noSearch: true },
+        cell: ({ row }) => {
+          const from = pagination.value?.from || 1;
+          return from + row.index;
+        }
+      },
+      {
+        accessorKey: 'img',
+        header: 'Gambar / Ikon',
+        meta: { width: '100px' },
+        cell: ({ row }) => {
+          const item = row.original;
+          if (item.img) {
+            return h('img', {
+              src: item.img,
+              alt: 'certificate image',
+              style: { width: '50px', height: '50px', objectFit: 'contain', borderRadius: '4px', background: '#fff', border: '1px solid #eee' }
+            });
+          } else {
+            return h('div', {
+              style: {
+                width: '50px',
+                height: '50px',
+                background: '#eee',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '4px'
+              }
+            }, [
+              h('i', { class: ['ti', item.icon || 'ti-certificate'] })
+            ]);
+          }
+        }
+      },
+      {
+        accessorKey: 'name',
+        header: 'Nama Sertifikat',
+        cell: ({ row }) => {
+          const item = row.original;
+          return h('div', {}, [
+            h('strong', {}, item.name),
+            h('br'),
+            h('small', { class: 'text-muted' }, item.desc || '-')
+          ]);
+        }
+      },
+      {
+        id: 'actions',
+        header: 'Action',
+        meta: { width: '100px', noSearch: true },
+        cell: ({ row }) => {
+          const item = row.original;
+          return h('div', { class: 'action-buttons' }, [
+            h('button', {
+              class: 'btn-edit',
+              title: 'Edit',
+              onClick: () => openModal(item)
+            }, [
+              h('i', { class: 'ti ti-pencil' })
+            ]),
+            h('button', {
+              class: 'btn-danger',
+              title: 'Hapus',
+              onClick: () => deleteItem(item.id)
+            }, [
+              h('i', { class: 'ti ti-trash' })
+            ])
+          ]);
+        }
+      }
+    ];
     
     const form = ref({
       id: null,
@@ -133,14 +182,23 @@ export default {
       desc: '',
       icon: 'ti-certificate',
       order: 0,
-      img: null
+      img: null,
+      remove_img: 0
     });
 
-    const loadData = async () => {
+    const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const response = await axios.get('/api/admin/certificates');
-        certificates.value = response.data;
+        const response = await axios.get(`/api/admin/certificates?page=${page}`);
+        certificates.value = response.data.data;
+        pagination.value = {
+          current_page: response.data.current_page,
+          last_page: response.data.last_page,
+          total: response.data.total,
+          per_page: response.data.per_page,
+          from: response.data.from,
+          to: response.data.to
+        };
       } catch (error) {
         console.error('Error loading certificates', error);
       } finally {
@@ -159,7 +217,8 @@ export default {
         desc: '',
         icon: 'ti-certificate',
         order: 0,
-        img: null
+        img: null,
+        remove_img: 0
       };
       imageFile.value = null;
       imagePreview.value = null;
@@ -171,7 +230,7 @@ export default {
     const openModal = (item = null) => {
       resetForm();
       if (item) {
-        form.value = { ...item };
+        form.value = { ...item, remove_img: 0 };
       }
       showModal.value = true;
     };
@@ -201,6 +260,16 @@ export default {
       }
     };
 
+    const removeImage = () => {
+      imageFile.value = null;
+      imagePreview.value = null;
+      form.value.img = null;
+      form.value.remove_img = 1;
+      if (fileInput.value) {
+        fileInput.value.value = '';
+      }
+    };
+
     const saveItem = async () => {
       saving.value = true;
       try {
@@ -212,6 +281,9 @@ export default {
         
         if (imageFile.value) {
           formData.append('img', imageFile.value);
+        }
+        if (form.value.remove_img) {
+          formData.append('remove_img', 1);
         }
 
         if (form.value.id) {
@@ -242,7 +314,15 @@ export default {
         loadData();
       } catch (error) {
         console.error('Error saving item', error);
-        Swal.fire('Error', 'Gagal menyimpan sertifikat.', 'error');
+        let errorMsg = 'Gagal menyimpan sertifikat.';
+        if (error.response && error.response.data && error.response.data.message) {
+          errorMsg = error.response.data.message;
+          if (error.response.data.errors) {
+            const firstError = Object.values(error.response.data.errors)[0][0];
+            errorMsg += ': ' + firstError;
+          }
+        }
+        Swal.fire('Error', errorMsg, 'error');
       } finally {
         saving.value = false;
       }
@@ -284,8 +364,11 @@ export default {
       form,
       fileInput,
       imagePreview,
+      columns,
+      pagination,
       openModal,
       closeModal,
+      removeImage,
       saveItem,
       deleteItem,
       handleFileChange

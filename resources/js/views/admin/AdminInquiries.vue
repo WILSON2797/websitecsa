@@ -5,51 +5,80 @@
     </div>
 
     <div class="table-container">
-      <div v-if="loading" class="text-center p-4">Loading...</div>
-      <table v-else class="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nama</th>
-            <th>Email</th>
-            <th>Perusahaan</th>
-            <th>Pesan</th>
-            <th>Tanggal</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="item in inquiries" :key="item.id">
-            <td>{{ item.id }}</td>
-            <td><strong>{{ item.name }}</strong></td>
-            <td>{{ item.email }}</td>
-            <td>{{ item.company }}</td>
-            <td><p class="message-text">{{ item.message }}</p></td>
-            <td>{{ new Date(item.created_at).toLocaleDateString('id-ID') }}</td>
-          </tr>
-          <tr v-if="inquiries.length === 0">
-            <td colspan="6" class="text-center p-4">Belum ada pesan masuk.</td>
-          </tr>
-        </tbody>
-      </table>
+      <DataTable
+        :data="inquiries"
+        :columns="columns"
+        :pagination="pagination"
+        :loading="loading"
+        @page-change="loadData"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
+import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
   name: 'AdminInquiries',
+  components: {
+    DataTable
+  },
   setup() {
     const inquiries = ref([]);
+    const pagination = ref(null);
     const loading = ref(true);
 
-    const loadData = async () => {
+    const columns = [
+      {
+        id: 'no',
+        header: 'No',
+        meta: { width: '60px', noSearch: true },
+        cell: ({ row }) => {
+          const from = pagination.value?.from || 1;
+          return from + row.index;
+        }
+      },
+      {
+        accessorKey: 'name',
+        header: 'Nama',
+        cell: ({ row }) => h('strong', {}, row.original.name)
+      },
+      {
+        accessorKey: 'email',
+        header: 'Email'
+      },
+      {
+        accessorKey: 'company',
+        header: 'Perusahaan'
+      },
+      {
+        accessorKey: 'message',
+        header: 'Pesan',
+        cell: ({ row }) => h('p', { class: 'message-text' }, row.original.message)
+      },
+      {
+        accessorKey: 'created_at',
+        header: 'Tanggal',
+        cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString('id-ID')
+      }
+    ];
+
+    const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get('/api/admin/inquiries');
-        inquiries.value = res.data;
+        const res = await axios.get(`/api/admin/inquiries?page=${page}`);
+        inquiries.value = res.data.data;
+        pagination.value = {
+          current_page: res.data.current_page,
+          last_page: res.data.last_page,
+          total: res.data.total,
+          per_page: res.data.per_page,
+          from: res.data.from,
+          to: res.data.to
+        };
       } catch (err) {
         console.error(err);
       } finally {
@@ -62,7 +91,7 @@ export default {
     });
 
     return {
-      inquiries, loading
+      inquiries, loading, columns, pagination
     };
   }
 };

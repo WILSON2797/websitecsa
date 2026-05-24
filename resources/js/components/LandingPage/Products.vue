@@ -10,7 +10,7 @@
       <div class="product-grid">
         <div v-for="(prod, idx) in productList" :key="idx" class="product-card reveal">
           <div class="product-img" style="height: 160px; overflow: hidden; position: relative;">
-            <img :src="getProductImg(prod, idx)" class="product-photo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;" :alt="prod.name" />
+            <img :src="getProductImg(prod, idx)" class="product-photo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;" :alt="prod.name" loading="lazy" decoding="async" />
             <div class="product-img-bg" style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(15,42,66,0.25)); pointer-events: none;"></div>
           </div>
           <div class="product-body">

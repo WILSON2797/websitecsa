@@ -1,26 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { authState, checkAuth } from './store/auth';
 
-import LandingPage from './views/LandingPage.vue';
-import ProductDetail from './views/ProductDetail.vue';
-import MachineDetail from './views/MachineDetail.vue';
-import AboutPage from './views/AboutPage.vue';
-import ProductsPage from './views/ProductsPage.vue';
-import MachinesPage from './views/MachinesPage.vue';
-import QualityPage from './views/QualityPage.vue';
-import ClientsPage from './views/ClientsPage.vue';
-import ContactPage from './views/ContactPage.vue';
+const LandingPage = () => import('./views/LandingPage.vue');
+const ProductDetail = () => import('./views/ProductDetail.vue');
+const MachineDetail = () => import('./views/MachineDetail.vue');
+const AboutPage = () => import('./views/AboutPage.vue');
+const ProductsPage = () => import('./views/ProductsPage.vue');
+const MachinesPage = () => import('./views/MachinesPage.vue');
+const FacilitiesPage = () => import('./views/FacilitiesPage.vue');
+const QualityPage = () => import('./views/QualityPage.vue');
+const ClientsPage = () => import('./views/ClientsPage.vue');
+const ContactPage = () => import('./views/ContactPage.vue');
 
 // Admin Views
-import Login from './views/admin/Login.vue';
-import AdminLayout from './views/admin/AdminLayout.vue';
-import Dashboard from './views/admin/Dashboard.vue';
-import AdminProducts from './views/admin/AdminProducts.vue';
-import AdminMachines from './views/admin/AdminMachines.vue';
-import AdminClients from './views/admin/AdminClients.vue';
-import AdminCertificates from './views/admin/AdminCertificates.vue';
-import AdminCms from './views/admin/AdminCms.vue';
-import AdminInquiries from './views/admin/AdminInquiries.vue';
+const Login = () => import('./views/admin/Login.vue');
+const AdminLayout = () => import('./views/admin/AdminLayout.vue');
+const Dashboard = () => import('./views/admin/Dashboard.vue');
+const AdminProducts = () => import('./views/admin/AdminProducts.vue');
+const AdminMachines = () => import('./views/admin/AdminMachines.vue');
+const AdminFacilities = () => import('./views/admin/AdminFacilities.vue');
+const AdminClients = () => import('./views/admin/AdminClients.vue');
+const AdminCertificates = () => import('./views/admin/AdminCertificates.vue');
+const AdminCms = () => import('./views/admin/AdminCms.vue');
+const AdminInquiries = () => import('./views/admin/AdminInquiries.vue');
 
 const routes = [
   // Public Routes
@@ -28,11 +30,13 @@ const routes = [
   { path: '/about', name: 'AboutPage', component: AboutPage },
   { path: '/products', name: 'ProductsPage', component: ProductsPage },
   { path: '/machines', name: 'MachinesPage', component: MachinesPage },
+  { path: '/facilities', name: 'FacilitiesPage', component: FacilitiesPage },
   { path: '/quality', name: 'QualityPage', component: QualityPage },
   { path: '/clients', name: 'ClientsPage', component: ClientsPage },
   { path: '/contact', name: 'ContactPage', component: ContactPage },
   { path: '/product/:id', name: 'ProductDetail', component: ProductDetail },
   { path: '/machine/:id', name: 'MachineDetail', component: MachineDetail },
+  { path: '/facility/:id', name: 'FacilityDetail', component: () => import('./views/FacilityDetail.vue') },
   
   // Admin Routes
   { path: '/admin/login', name: 'AdminLogin', component: Login },
@@ -44,6 +48,7 @@ const routes = [
       { path: '', name: 'AdminDashboard', component: Dashboard },
       { path: 'products', name: 'AdminProducts', component: AdminProducts },
       { path: 'machines', name: 'AdminMachines', component: AdminMachines },
+      { path: 'facilities', name: 'AdminFacilities', component: AdminFacilities },
       { path: 'clients', name: 'AdminClients', component: AdminClients },
       { path: 'certificates', name: 'AdminCertificates', component: AdminCertificates },
       { path: 'cms', name: 'AdminCms', component: AdminCms },

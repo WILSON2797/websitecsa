@@ -18,6 +18,10 @@
         <i class="ti ti-settings-2"></i>
         <span v-if="!collapsed">Mesin</span>
       </router-link>
+      <router-link to="/admin/facilities" class="nav-item" active-class="active">
+        <i class="ti ti-building"></i>
+        <span v-if="!collapsed">Fasilitas</span>
+      </router-link>
       <router-link to="/admin/certificates" class="nav-item" active-class="active">
         <i class="ti ti-certificate"></i>
         <span v-if="!collapsed">Sertifikat</span>

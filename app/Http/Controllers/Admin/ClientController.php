@@ -11,9 +11,23 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class ClientController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Client::orderBy('id')->get());
+        $query = Client::orderBy('id', 'desc');
+
+        if ($search = $request->input('search')) {
+            foreach ($search as $field => $value) {
+                if ($value && in_array($field, ['id', 'name', 'industry'])) {
+                    $query->where($field, 'like', "%{$value}%");
+                }
+            }
+        }
+
+        if ($request->is('api/admin/*')) {
+            return response()->json($query->paginate(10));
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -58,6 +72,12 @@ class ClientController extends Controller
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('clients/' . $filename, (string) $encoded);
             $validated['logo_path'] = '/storage/clients/' . $filename;
+        } elseif ($request->has('remove_img') && $request->remove_img == '1') {
+            if ($client->logo_path) {
+                $oldPath = str_replace('/storage/', '', $client->logo_path);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $validated['logo_path'] = null;
         }
 
         $client->update($validated);

@@ -3,21 +3,21 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Machine;
+use App\Models\Facility;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
-class MachineController extends Controller
+class FacilityController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Machine::orderBy('id', 'desc');
+        $query = Facility::orderBy('id', 'asc');
 
         if ($search = $request->input('search')) {
             foreach ($search as $field => $value) {
-                if ($value && in_array($field, ['id', 'name', 'spec', 'qty'])) {
+                if ($value && in_array($field, ['id', 'name'])) {
                     $query->where($field, 'like', "%{$value}%");
                 }
             }
@@ -34,15 +34,11 @@ class MachineController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'spec' => 'required|string|max:255',
-            'qty' => 'required|integer|min:0',
+            'short_desc' => 'nullable|string',
+            'long_desc' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
             'img' => 'nullable|image|max:15360',
-            'longDesc' => 'nullable|string',
-            'origin' => 'nullable|string|max:255',
-            'precision' => 'nullable|string|max:255',
-            'safety' => 'nullable|string',
-            'application' => 'nullable|string',
+            'spec' => 'nullable|string',
         ]);
 
         if ($request->hasFile('img')) {
@@ -50,62 +46,58 @@ class MachineController extends Controller
             $image = $manager->read($request->file('img'));
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
-            Storage::disk('public')->put('machines/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/machines/' . $filename;
+            Storage::disk('public')->put('facilities/' . $filename, (string) $encoded);
+            $validated['img'] = '/storage/facilities/' . $filename;
         }
 
-        $machine = Machine::create($validated);
-        return response()->json($machine, 201);
+        $facility = Facility::create($validated);
+        return response()->json($facility, 201);
     }
 
     public function update(Request $request, $id)
     {
-        $machine = Machine::findOrFail($id);
+        $facility = Facility::findOrFail($id);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'spec' => 'required|string|max:255',
-            'qty' => 'required|integer|min:0',
+            'short_desc' => 'nullable|string',
+            'long_desc' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
             'img' => 'nullable|image|max:15360',
-            'longDesc' => 'nullable|string',
-            'origin' => 'nullable|string|max:255',
-            'precision' => 'nullable|string|max:255',
-            'safety' => 'nullable|string',
-            'application' => 'nullable|string',
+            'spec' => 'nullable|string',
         ]);
 
         if ($request->hasFile('img')) {
-            if ($machine->img) {
-                $oldPath = str_replace('/storage/', '', $machine->img);
+            if ($facility->img) {
+                $oldPath = str_replace('/storage/', '', $facility->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $manager = new ImageManager(new Driver());
             $image = $manager->read($request->file('img'));
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
-            Storage::disk('public')->put('machines/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/machines/' . $filename;
+            Storage::disk('public')->put('facilities/' . $filename, (string) $encoded);
+            $validated['img'] = '/storage/facilities/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
-            if ($machine->img) {
-                $oldPath = str_replace('/storage/', '', $machine->img);
+            if ($facility->img) {
+                $oldPath = str_replace('/storage/', '', $facility->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $validated['img'] = null;
         }
 
-        $machine->update($validated);
-        return response()->json($machine);
+        $facility->update($validated);
+        return response()->json($facility);
     }
 
     public function destroy($id)
     {
-        $machine = Machine::findOrFail($id);
-        if ($machine->img) {
-            $oldPath = str_replace('/storage/', '', $machine->img);
+        $facility = Facility::findOrFail($id);
+        if ($facility->img) {
+            $oldPath = str_replace('/storage/', '', $facility->img);
             Storage::disk('public')->delete($oldPath);
         }
-        $machine->delete();
-        return response()->json(['message' => 'Machine deleted successfully']);
+        $facility->delete();
+        return response()->json(['message' => 'Facility deleted successfully']);
     }
 }

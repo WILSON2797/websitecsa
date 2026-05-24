@@ -11,9 +11,13 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class CertificateController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Certificate::orderBy('order')->orderBy('id')->get());
+        $query = Certificate::orderBy('order')->orderBy('id', 'desc');
+        if ($request->is('api/admin/*')) {
+            return response()->json($query->paginate(10));
+        }
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -66,6 +70,11 @@ class CertificateController extends Controller
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('certificates/' . $filename, (string) $encoded);
             $validated['img'] = '/storage/certificates/' . $filename;
+        } elseif ($request->has('remove_img') && $request->remove_img == '1') {
+            if ($certificate->img && file_exists(public_path($certificate->img))) {
+                unlink(public_path($certificate->img));
+            }
+            $validated['img'] = null;
         }
 
         if (!isset($validated['order']) || is_null($validated['order'])) {

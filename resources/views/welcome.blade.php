@@ -17,8 +17,9 @@
     <!-- Barlow & Barlow Condensed Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
     
-    <!-- Tabler Icons CSS Webfont -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+    <!-- Defer Tabler Icons CSS Webfont -->
+    <link rel="preload" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"></noscript>
 
     <!-- Vite Assets (compiles app.css & app.js) -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])

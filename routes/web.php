@@ -39,6 +39,12 @@ Route::middleware('auth')->group(function () {
     Route::put('/api/admin/certificates/{id}', [\App\Http\Controllers\Admin\CertificateController::class, 'update']);
     Route::delete('/api/admin/certificates/{id}', [\App\Http\Controllers\Admin\CertificateController::class, 'destroy']);
 
+    // Facilities
+    Route::get('/api/admin/facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'index']);
+    Route::post('/api/admin/facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'store']);
+    Route::put('/api/admin/facilities/{id}', [\App\Http\Controllers\Admin\FacilityController::class, 'update']);
+    Route::delete('/api/admin/facilities/{id}', [\App\Http\Controllers\Admin\FacilityController::class, 'destroy']);
+
     // CMS & Inquiries
     Route::get('/api/admin/cms', [\App\Http\Controllers\Admin\CmsController::class, 'index']);
     Route::post('/api/admin/cms', [\App\Http\Controllers\Admin\CmsController::class, 'updateBatch']);
@@ -50,6 +56,7 @@ Route::get('/api/products', [\App\Http\Controllers\Admin\ProductController::clas
 Route::get('/api/machines', [\App\Http\Controllers\Admin\MachineController::class, 'index']);
 Route::get('/api/clients', [\App\Http\Controllers\Admin\ClientController::class, 'index']);
 Route::get('/api/certificates', [\App\Http\Controllers\Admin\CertificateController::class, 'index']);
+Route::get('/api/facilities', [\App\Http\Controllers\Admin\FacilityController::class, 'index']);
 
 // SPA catch-all route (excludes API routes)
 Route::get('/{any}', function () {

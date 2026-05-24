@@ -10,6 +10,21 @@ export default defineConfig({
         }),
         vue(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (id.includes('node_modules')) {
+                        if (id.includes('vue') || id.includes('vue-router')) {
+                            return 'vendor-vue-core';
+                        }
+                        return 'vendor-libs';
+                    }
+                }
+            }
+        },
+        chunkSizeWarningLimit: 1000,
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

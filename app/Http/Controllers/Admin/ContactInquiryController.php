@@ -10,6 +10,6 @@ class ContactInquiryController extends Controller
 {
     public function index()
     {
-        return response()->json(ContactInquiry::latest()->get());
+        return response()->json(ContactInquiry::latest()->paginate(10));
     }
 }

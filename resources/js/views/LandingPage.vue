@@ -16,6 +16,9 @@
       <!-- Machines Fleet Section -->
       <Machines :content="content" />
 
+      <!-- Facilities Section -->
+      <Facilities :content="content" :facilities="content.facilities_list || []" />
+
       <!-- Quality Assurance Section -->
       <Quality :content="content" :certificates="certificates" />
 
@@ -29,16 +32,18 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted, defineAsyncComponent } from 'vue';
 
 import Hero from '../components/LandingPage/Hero.vue';
 import Ticker from '../components/LandingPage/Ticker.vue';
 import About from '../components/LandingPage/About.vue';
-import Products from '../components/LandingPage/Products.vue';
-import Machines from '../components/LandingPage/Machines.vue';
-import Quality from '../components/LandingPage/Quality.vue';
-import Clients from '../components/LandingPage/Clients.vue';
-import Contact from '../components/LandingPage/Contact.vue';
+
+const Products = defineAsyncComponent(() => import('../components/LandingPage/Products.vue'));
+const Machines = defineAsyncComponent(() => import('../components/LandingPage/Machines.vue'));
+const Facilities = defineAsyncComponent(() => import('../components/LandingPage/Facilities.vue'));
+const Quality = defineAsyncComponent(() => import('../components/LandingPage/Quality.vue'));
+const Clients = defineAsyncComponent(() => import('../components/LandingPage/Clients.vue'));
+const Contact = defineAsyncComponent(() => import('../components/LandingPage/Contact.vue'));
 
 export default {
   name: 'LandingPage',
@@ -48,6 +53,7 @@ export default {
     About,
     Products,
     Machines,
+    Facilities,
     Quality,
     Clients,
     Contact

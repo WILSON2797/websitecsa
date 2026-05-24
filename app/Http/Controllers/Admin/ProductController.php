@@ -11,9 +11,23 @@ use Intervention\Image\Drivers\Gd\Driver;
 
 class ProductController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Product::orderBy('id')->get());
+        $query = Product::orderBy('id', 'desc');
+
+        if ($search = $request->input('search')) {
+            foreach ($search as $field => $value) {
+                if ($value && in_array($field, ['id', 'name', 'tag', 'tolerance'])) {
+                    $query->where($field, 'like', "%{$value}%");
+                }
+            }
+        }
+
+        if ($request->is('api/admin/*')) {
+            return response()->json($query->paginate(10));
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -74,7 +88,6 @@ class ProductController extends Controller
         ]);
 
         if ($request->hasFile('img')) {
-            // Delete old image if exists
             if ($product->img) {
                 $oldPath = str_replace('/storage/', '', $product->img);
                 Storage::disk('public')->delete($oldPath);
@@ -85,6 +98,12 @@ class ProductController extends Controller
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('products/' . $filename, (string) $encoded);
             $validated['img'] = '/storage/products/' . $filename;
+        } elseif ($request->has('remove_img') && $request->remove_img == '1') {
+            if ($product->img) {
+                $oldPath = str_replace('/storage/', '', $product->img);
+                Storage::disk('public')->delete($oldPath);
+            }
+            $validated['img'] = null;
         }
         if (!isset($validated['specs']) || is_null($validated['specs'])) {
             $validated['specs'] = [];

@@ -17,7 +17,7 @@
           <!-- Card Image Slot / Graphic Drafting Backdrop -->
           <div class="machine-img-slot">
             <div class="machine-grid-bg"></div>
-            <img :src="getMachineImg(m, idx)" class="machine-real-img" :alt="m.name" />
+            <img :src="getMachineImg(m, idx)" class="machine-real-img" :alt="m.name" loading="lazy" decoding="async" />
             <!-- Dynamic Count Badge -->
             <div class="machine-qty-badge">{{ m.qty }} Unit</div>
           </div>
