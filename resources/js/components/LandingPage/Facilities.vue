@@ -6,9 +6,9 @@
 
     <div class="section-inner">
       <div class="section-header" data-aos="fade-down">
-        <div class="section-eyebrow">FASILITAS PENDUKUNG</div>
-        <h2 class="section-title">Infrastruktur & Layanan</h2>
-        <p class="section-sub">Mendukung kelancaran proses produksi dengan standar industri terbaik dari tahap perancangan hingga jaminan mutu.</p>
+        <div class="section-eyebrow">SUPPORTING FACILITIES</div>
+        <h2 class="section-title">Infrastructure & Services</h2>
+        <p class="section-sub">Ensuring seamless production processes with the highest industry standards, from product design to quality assurance.</p>
       </div>
       
       <!-- Facilities Cards Grid (2-4 Columns depending on data) -->
@@ -140,7 +140,7 @@ export default {
 }
 
 :deep(.section-eyebrow) {
-  color: var(--accent) !important;
+  color: var(--csa-red) !important;
 }
 
 /* Facility Grid Layout */

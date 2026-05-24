@@ -96,6 +96,9 @@ export default {
   height: 40px;
   width: auto;
   object-fit: contain;
-  border-radius: 4px;
+  border-radius: 6px;
+  background-color: #ffffff;
+  padding: 4px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 </style>

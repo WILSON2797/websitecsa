@@ -14,7 +14,7 @@
           <div class="contact-item">
             <div class="contact-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
             <div>
-              <div class="contact-label">ALAMAT</div>
+              <div class="contact-label">Address</div>
               <div class="contact-value">{{ content.contact_alamat || 'Kawasan Industri MM2100' }}</div>
               <div class="contact-value-sub" v-html="addressSubHtml"></div>
             </div>
@@ -22,7 +22,7 @@
           <div class="contact-item">
             <div class="contact-icon"><i class="ti ti-phone" aria-hidden="true"></i></div>
             <div>
-              <div class="contact-label">TELEPON</div>
+              <div class="contact-label">Phone</div>
               <div class="contact-value">{{ content.contact_telp || '+62 21 8990 1234' }}</div>
               <div class="contact-value-sub">{{ content.contact_fax || '+62 21 8990 1235 (Fax)' }}</div>
             </div>
@@ -38,7 +38,7 @@
           <div class="contact-item">
             <div class="contact-icon"><i class="ti ti-clock" aria-hidden="true"></i></div>
             <div>
-              <div class="contact-label">JAM OPERASIONAL</div>
+              <div class="contact-label">Operating Hours</div>
               <div class="contact-value">{{ content.contact_jam_1 || 'Senin — Jumat: 08.00 — 17.00' }}</div>
               <div class="contact-value-sub">{{ content.contact_jam_2 || 'Sabtu: 08.00 — 13.00 WIB' }}</div>
             </div>
@@ -86,25 +86,25 @@
           <form @submit.prevent="handleSubmit">
             <div class="form-grid">
               <div class="form-group">
-                <label class="form-label" for="nama">Nama Lengkap *</label>
-                <input class="form-input" type="text" id="nama" v-model="form.nama" placeholder="Nama Anda" required>
+                <label class="form-label" for="nama">Full Name *</label>
+                <input class="form-input" type="text" id="nama" v-model="form.nama" placeholder="Your Name" required>
               </div>
               <div class="form-group">
-                <label class="form-label" for="perusahaan">Perusahaan</label>
-                <input class="form-input" type="text" id="perusahaan" v-model="form.perusahaan" placeholder="Nama perusahaan">
+                <label class="form-label" for="perusahaan">Company</label>
+                <input class="form-input" type="text" id="perusahaan" v-model="form.perusahaan" placeholder="Company Name">
               </div>
               <div class="form-group">
                 <label class="form-label" for="email">Email *</label>
-                <input class="form-input" type="email" id="email" v-model="form.email" placeholder="email@perusahaan.com" required>
+                <input class="form-input" type="email" id="email" v-model="form.email" placeholder="email@company.com" required>
               </div>
               <div class="form-group">
-                <label class="form-label" for="telp">No. Telepon</label>
+                <label class="form-label" for="telp">Phone Number</label>
                 <input class="form-input" type="tel" id="telp" v-model="form.telp" placeholder="+62 xxx xxxx xxxx">
               </div>
               <div class="form-group full">
-                <label class="form-label" for="layanan">Layanan yang Dibutuhkan</label>
+                <label class="form-label" for="layanan">Required Service</label>
                 <select class="form-select" id="layanan" v-model="form.layanan">
-                  <option value="">-- Pilih Layanan --</option>
+                  <option value="">-- Select Service --</option>
                   <option value="Progressive Stamping">Progressive Stamping</option>
                   <option value="Deep Drawing">Deep Drawing</option>
                   <option value="Fine Blanking">Fine Blanking</option>
@@ -114,14 +114,14 @@
                 </select>
               </div>
               <div class="form-group full">
-                <label class="form-label" for="pesan">Detail Kebutuhan *</label>
+                <label class="form-label" for="pesan">Requirement Details *</label>
                 <textarea class="form-textarea" id="pesan" v-model="form.pesan" placeholder="Jelaskan spesifikasi material, dimensi, volume, dan kebutuhan Anda..." required></textarea>
               </div>
             </div>
             <button type="submit" class="form-submit" :disabled="loading">
               <span v-if="loading" class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="width: 14px; height: 14px; border: 2px solid #fff; border-right-color: transparent; border-radius: 50%; display: inline-block; animation: spin 0.75s linear infinite;"></span>
               <i v-else class="ti ti-send" aria-hidden="true"></i>
-              Kirim Permintaan
+              Send Request
             </button>
           </form>
         </div>

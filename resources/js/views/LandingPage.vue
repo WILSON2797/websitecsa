@@ -25,6 +25,9 @@
       <!-- Clients Section -->
       <Clients :content="content" />
 
+      <!-- Documentation Section -->
+      <Documentation :content="content" />
+
       <!-- Contact Form & Strategic Details Section -->
       <Contact :content="content" />
     </div>
@@ -43,6 +46,7 @@ const Machines = defineAsyncComponent(() => import('../components/LandingPage/Ma
 const Facilities = defineAsyncComponent(() => import('../components/LandingPage/Facilities.vue'));
 const Quality = defineAsyncComponent(() => import('../components/LandingPage/Quality.vue'));
 const Clients = defineAsyncComponent(() => import('../components/LandingPage/Clients.vue'));
+const Documentation = defineAsyncComponent(() => import('../components/LandingPage/Documentation.vue'));
 const Contact = defineAsyncComponent(() => import('../components/LandingPage/Contact.vue'));
 
 export default {
@@ -56,6 +60,7 @@ export default {
     Facilities,
     Quality,
     Clients,
+    Documentation,
     Contact
   },
   props: {

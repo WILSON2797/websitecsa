@@ -4,7 +4,7 @@
     <div class="section-inner">
       <div class="about-grid">
         <div class="about-text" data-aos="fade-up" data-aos-duration="1000">
-          <div class="section-eyebrow">TENTANG KAMI</div>
+          <div class="section-eyebrow">About Us</div>
           <h2 class="section-title" style="margin-bottom:24px;">
             {{ content.about_title || 'Pengalaman & Kepercayaan Sejak 1998' }}
           </h2>
