@@ -14,12 +14,11 @@
 
     <!-- PUBLIC route: show loader, navbar, footer, CMS data -->
     <template v-else>
-      <div v-if="loading" class="d-flex-loader">
-        <!-- <div class="spinner"></div>
-        <h5 class="loader-text">MEMUAT CAHAYA SENTOSA ABADI...</h5> -->
-      </div>
+      <transition name="intro-fade">
+        <IntroLoader v-if="loading" />
+      </transition>
 
-      <div v-else class="app-content-shell">
+      <div v-if="!loading" class="app-content-shell">
         <Navbar :activeSection="activeSection" />
 
         <router-view v-slot="{ Component }">
@@ -46,12 +45,14 @@ import axios from 'axios';
 
 import Navbar from './components/LandingPage/Navbar.vue';
 import Footer from './components/LandingPage/Footer.vue';
+import IntroLoader from './components/LandingPage/IntroLoader.vue';
 
 export default {
   name: 'App',
   components: {
     Navbar,
-    Footer
+    Footer,
+    IntroLoader
   },
   setup() {
     const routerReady = ref(false);
@@ -71,18 +72,26 @@ export default {
       if (isAdminRoute.value) return;
 
       try {
-        const [contentRes, certRes] = await Promise.all([
+        const fetchPromise = Promise.all([
           axios.get('/api/content'),
           axios.get('/api/certificates')
         ]);
+        
+        // Minimum display time for Intro Animation is 2.5s
+        const minimumDelayPromise = new Promise(resolve => setTimeout(resolve, 2500));
+        
+        // Wait for both fetch and minimum delay to finish
+        const [contentRes, certRes] = await Promise.all([fetchPromise, minimumDelayPromise]).then(results => results[0]);
+        
         content.value = contentRes.data;
         certificates.value = certRes.data;
       } catch (error) {
         console.error('Failed to load global company content:', error);
       } finally {
+        // Delay slight tick to allow fade out transition
         setTimeout(() => {
           loading.value = false;
-        }, 300);
+        }, 100);
       }
     };
 
@@ -147,6 +156,15 @@ export default {
 </script>
 
 <style>
+/* Intro overlay transition */
+.intro-fade-leave-active {
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.intro-fade-leave-to {
+  opacity: 0;
+  transform: scale(1.05);
+}
+
 /* Page transition animation */
 .fade-enter-active,
 .fade-leave-active {

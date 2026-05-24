@@ -3,9 +3,8 @@
   <nav id="navbar" :class="{ 'scrolled': isScrolled }">
     <div class="nav-inner">
       <div class="logo">
-        <div class="logo-mark"><i class="ti ti-hammer" aria-hidden="true"></i></div>
+        <img :src="'/LogoCSA2.png'" alt="CSA Logo" class="nav-logo-img" />
         <div class="logo-text">
-          <span class="logo-pt">PT.</span>
           <span class="logo-name">CAHAYA SENTOSA ABADI</span>
         </div>
       </div>
@@ -57,3 +56,12 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.nav-logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+  border-radius: 4px;
+}
+</style>
