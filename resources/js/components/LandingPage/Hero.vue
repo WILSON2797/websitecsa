@@ -1,10 +1,10 @@
 <template>
   <!-- HERO -->
-  <section id="hero">
+  <section id="hero" class="parallax-bg">
     <div class="hero-accent-bar"></div>
     <div class="hero-bg-lines"></div>
     <div class="hero-inner">
-      <div>
+      <div data-aos="fade-right" data-aos-duration="1000">
         <div class="hero-badge">
           <i class="ti ti-award" aria-hidden="true"></i> 
           {{ content.hero_badge || 'IATF 16949 & ISO 9001:2015 Certified' }}
@@ -19,7 +19,7 @@
       </div>
       
       <!-- Stats Sidebar Card Panel -->
-      <div class="hero-panel">
+      <div class="hero-panel" data-aos="fade-left" data-aos-duration="1200" data-aos-delay="300">
         <div class="panel-title">COMPANY AT A GLANCE</div>
         <div class="stats-grid">
           <div v-for="(stat, idx) in statsList" :key="idx" class="stat-item">

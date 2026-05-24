@@ -22,7 +22,7 @@
         <Navbar :activeSection="activeSection" />
 
         <router-view v-slot="{ Component }">
-          <transition name="fade" mode="out-in">
+          <transition name="page" mode="out-in">
             <component 
               :is="Component" 
               :content="content" 
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, watch } from 'vue';
+import { ref, computed, onMounted, watch, nextTick } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import axios from 'axios';
 
@@ -67,6 +67,49 @@ export default {
       return route.path.startsWith('/admin');
     });
 
+    // Native AOS implementation with MutationObserver for dynamic elements
+    let isAosInitialized = false;
+    const initAOS = () => {
+      if (isAosInitialized) return;
+      isAosInitialized = true;
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('aos-animate');
+          } else {
+            entry.target.classList.remove('aos-animate');
+          }
+        });
+      }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+      });
+
+      const observeElements = () => {
+        document.querySelectorAll('[data-aos]:not([data-aos-observed])').forEach(el => {
+          const delay = el.getAttribute('data-aos-delay');
+          if (delay) el.style.transitionDelay = `${delay}ms`;
+          
+          const duration = el.getAttribute('data-aos-duration');
+          if (duration) el.style.transitionDuration = `${duration}ms`;
+
+          observer.observe(el);
+          el.setAttribute('data-aos-observed', 'true');
+        });
+      };
+
+      // Initial observation
+      observeElements();
+
+      // Setup MutationObserver to watch for dynamically inserted elements (v-if, v-for, transitions)
+      const mutationObserver = new MutationObserver(() => {
+        observeElements();
+      });
+
+      mutationObserver.observe(document.body, { childList: true, subtree: true });
+    };
+
     const fetchContent = async () => {
       // Never fetch CMS content on admin routes
       if (isAdminRoute.value) return;
@@ -91,6 +134,9 @@ export default {
         // Delay slight tick to allow fade out transition
         setTimeout(() => {
           loading.value = false;
+          nextTick(() => {
+            initAOS();
+          });
         }, 100);
       }
     };
@@ -163,16 +209,5 @@ export default {
 .intro-fade-leave-to {
   opacity: 0;
   transform: scale(1.05);
-}
-
-/* Page transition animation */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s ease;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
 }
 </style>

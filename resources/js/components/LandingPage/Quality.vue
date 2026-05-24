@@ -2,7 +2,7 @@
   <!-- QUALITY -->
   <section id="quality" class="section">
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">{{ content.quality_eyebrow || 'KUALITAS' }}</div>
         <h2 class="section-title">{{ content.quality_title || 'Standar Mutu Tertinggi' }}</h2>
         <p class="section-sub">{{ content.quality_sub || 'Kami berkomitmen pada kualitas yang terukur dan konsisten di setiap tahap produksi.' }}</p>
@@ -10,8 +10,9 @@
       <div class="quality-layout">
         
         <!-- Certificates Grid (Left) -->
-        <div class="cert-grid reveal">
-          <div v-for="(c, idx) in certList" :key="idx" class="cert-card" style="display: flex; flex-direction: column;">
+        <div class="cert-grid">
+          <div v-for="(c, idx) in certList" :key="idx" data-aos="fade-up" :data-aos-delay="idx * 150">
+            <div class="cert-card" style="display: flex; flex-direction: column; height: 100%;">
             <div class="cert-icon"><i :class="['ti', c.icon || 'ti-certificate']" aria-hidden="true"></i></div>
             <div class="cert-name">{{ c.name }}</div>
             <div class="cert-desc" style="flex-grow: 1;">{{ c.desc }}</div>
@@ -23,9 +24,10 @@
             </div>
           </div>
         </div>
+      </div>
         
         <!-- QC Steps Checklist (Right) -->
-        <div class="qc-steps reveal">
+        <div class="qc-steps" data-aos="fade-up" data-aos-duration="1000">
           <h3 style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--navy);margin-bottom:20px;">Proses Quality Control</h3>
           <div v-for="(step, idx) in qcSteps" :key="idx" class="qc-step">
             <div class="qc-num">{{ step.num }}</div>

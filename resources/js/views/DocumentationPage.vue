@@ -31,16 +31,18 @@
             <div 
               v-for="(item, idx) in filteredGalleries" 
               :key="item.id || idx"
-              class="gallery-card"
-              @click="openLightbox(idx)"
+              data-aos="fade-up"
+              :data-aos-delay="idx * 100"
             >
-              <div class="gallery-img-slot">
+              <div class="gallery-card" @click="openLightbox(idx)">
+                <div class="gallery-img-slot">
                 <img :src="item.image_url" :alt="item.title" class="gallery-real-img" loading="lazy">
               </div>
               <div class="gallery-body">
                 <span class="gallery-category-tag">{{ item.category }}</span>
                 <h3 class="gallery-card-title">{{ item.title }}</h3>
                 <p class="gallery-card-desc" v-if="item.description">{{ item.description }}</p>
+                </div>
               </div>
             </div>
           </div>

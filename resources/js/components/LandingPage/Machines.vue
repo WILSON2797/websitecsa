@@ -5,15 +5,16 @@
     <div class="machines-grid-accent"></div>
 
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">{{ content.machines_eyebrow || 'FASILITAS PRODUKSI' }}</div>
         <h2 class="section-title">{{ content.machines_title || 'Mesin & Peralatan' }}</h2>
         <p class="section-sub">{{ content.machines_sub || 'Dilengkapi mesin press modern dengan berbagai kapasitas untuk memenuhi kebutuhan produksi Anda.' }}</p>
       </div>
       
       <!-- Machines Cards Grid (3 Columns) -->
-      <div class="machine-grid reveal">
-        <div v-for="(m, idx) in machineList" :key="idx" class="machine-card-new">
+      <div class="machine-grid">
+        <div v-for="(m, idx) in machineList" :key="idx" data-aos="fade-up" :data-aos-delay="idx * 150">
+          <div class="machine-card-new">
           <!-- Card Image Slot / Graphic Drafting Backdrop -->
           <div class="machine-img-slot">
             <div class="machine-grid-bg"></div>
@@ -28,15 +29,16 @@
             <p class="machine-card-spec"><i class="ti ti-activity me-1 text-accent"></i> {{ m.spec }}</p>
             <p class="machine-card-desc">{{ m.shortDesc }}</p>
             
-            <router-link :to="'/machine/' + idx" class="btn-machine-detail">
-              View Details <i class="ti ti-chevron-right ms-1"></i>
-            </router-link>
+              <router-link :to="'/machine/' + idx" class="btn-machine-detail">
+                View Details <i class="ti ti-chevron-right ms-1"></i>
+              </router-link>
+            </div>
           </div>
         </div>
       </div>
       
       <!-- Auxiliary Quality Facilities Row (Clean Icons on Light Theme) -->
-      <div class="facility-row reveal">
+      <div class="facility-row" data-aos="fade-up" data-aos-duration="1000">
         <div v-for="(fac, idx) in facilityList" :key="idx" class="facility-item-new">
           <div class="facility-icon-wrap-new">
             <i :class="['ti', fac.icon || 'ti-package']" aria-hidden="true"></i>

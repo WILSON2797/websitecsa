@@ -2,14 +2,14 @@
   <!-- CLIENTS -->
   <section id="clients" class="section">
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">{{ content.clients_eyebrow || 'KLIEN & MITRA' }}</div>
         <h2 class="section-title" v-html="titleHtml"></h2>
       </div>
-      <p class="client-intro reveal">{{ content.clients_intro || 'Selama lebih dari 26 tahun, kami telah menjadi mitra terpercaya bagi perusahaan-perusahaan multinasional di berbagai sektor industri di Indonesia dan kawasan Asia Tenggara.' }}</p>
+      <p class="client-intro" data-aos="fade-up" data-aos-delay="100">{{ content.clients_intro || 'Selama lebih dari 26 tahun, kami telah menjadi mitra terpercaya bagi perusahaan-perusahaan multinasional di berbagai sektor industri di Indonesia dan kawasan Asia Tenggara.' }}</p>
       
       <!-- Interactive Industry Tabs Filtering -->
-      <div class="industry-tabs reveal">
+      <div class="industry-tabs" data-aos="fade-up" data-aos-delay="200">
         <div 
           v-for="tab in tabs" 
           :key="tab" 
@@ -21,14 +21,16 @@
       </div>
 
       <!-- Clients Grid -->
-      <div class="clients-grid reveal">
-        <div v-for="(c, idx) in filteredClients" :key="idx" class="client-card">
-          <div class="client-logo-wrap">
-            <img v-if="c.logo_path" :src="c.logo_path" :alt="c.name" class="client-logo-img">
-            <div v-else class="client-logo-placeholder">{{ c.name.charAt(0) }}</div>
+      <div class="clients-grid">
+        <div v-for="(c, idx) in filteredClients" :key="idx" data-aos="fade-up" :data-aos-delay="idx * 100">
+          <div class="client-card">
+            <div class="client-logo-wrap">
+              <img v-if="c.logo_path" :src="c.logo_path" :alt="c.name" class="client-logo-img">
+              <div v-else class="client-logo-placeholder">{{ c.name.charAt(0) }}</div>
+            </div>
+            <div class="client-name">{{ c.name }}</div>
+            <div class="client-industry">{{ c.industry }}</div>
           </div>
-          <div class="client-name">{{ c.name }}</div>
-          <div class="client-industry">{{ c.industry }}</div>
         </div>
       </div>
     </div>

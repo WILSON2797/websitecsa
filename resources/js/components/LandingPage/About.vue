@@ -3,7 +3,7 @@
   <section id="about" class="section">
     <div class="section-inner">
       <div class="about-grid">
-        <div class="about-text reveal">
+        <div class="about-text" data-aos="fade-up" data-aos-duration="1000">
           <div class="section-eyebrow">TENTANG KAMI</div>
           <h2 class="section-title" style="margin-bottom:24px;">
             {{ content.about_title || 'Pengalaman & Kepercayaan Sejak 1998' }}
@@ -22,7 +22,7 @@
           </div>
         </div>
 
-        <div class="visi-misi reveal">
+        <div class="visi-misi" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
           <div class="vm-card visi" style="margin-bottom:0;">
             <div class="vm-label">VISI</div>
             <div class="vm-text">

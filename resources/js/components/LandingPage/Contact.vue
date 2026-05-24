@@ -2,7 +2,7 @@
   <!-- CONTACT -->
   <section id="contact" class="section">
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">{{ content.contact_eyebrow || 'KONTAK' }}</div>
         <h2 class="section-title">{{ content.contact_title || 'Hubungi Kami' }}</h2>
         <p class="section-sub">{{ content.contact_sub || 'Tim kami siap membantu kebutuhan stamping Anda. Kirimkan pertanyaan atau request quotation.' }}</p>
@@ -10,7 +10,7 @@
       <div class="contact-grid">
         
         <!-- Info Column (Left) -->
-        <div class="contact-info reveal">
+        <div class="contact-info" data-aos="fade-up" data-aos-duration="1000">
           <div class="contact-item">
             <div class="contact-icon"><i class="ti ti-map-pin" aria-hidden="true"></i></div>
             <div>
@@ -70,7 +70,7 @@
         </div>
         
         <!-- Quote Form Column (Right) -->
-        <div class="contact-form reveal">
+        <div class="contact-form" data-aos="fade-up" data-aos-duration="1000" data-aos-delay="200">
           <div class="form-title">Request Quotation</div>
           
           <!-- Success Alert -->

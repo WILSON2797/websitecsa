@@ -5,15 +5,16 @@
     <div class="facilities-grid-accent"></div>
 
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">FASILITAS PENDUKUNG</div>
         <h2 class="section-title">Infrastruktur & Layanan</h2>
         <p class="section-sub">Mendukung kelancaran proses produksi dengan standar industri terbaik dari tahap perancangan hingga jaminan mutu.</p>
       </div>
       
       <!-- Facilities Cards Grid (2-4 Columns depending on data) -->
-      <div class="facility-grid reveal">
-        <div v-for="(fac, idx) in facilitiesData" :key="fac.id || idx" class="facility-card-new">
+      <div class="facility-grid">
+        <div v-for="(fac, idx) in facilitiesData" :key="fac.id || idx" data-aos="fade-up" :data-aos-delay="idx * 150">
+          <div class="facility-card-new">
           <!-- Card Image Slot -->
           <div class="facility-img-slot">
             <div class="facility-grid-bg"></div>
@@ -28,9 +29,10 @@
             <h3 class="facility-card-title">{{ fac.name }}</h3>
             <p class="facility-card-desc">{{ fac.short_desc || fac.long_desc }}</p>
             
-            <router-link :to="'/facility/' + (fac.id || idx)" class="btn-facility-detail">
-              View Details <i class="ti ti-chevron-right ms-1"></i>
-            </router-link>
+              <router-link :to="'/facility/' + (fac.id || idx)" class="btn-facility-detail">
+                View Details <i class="ti ti-chevron-right ms-1"></i>
+              </router-link>
+            </div>
           </div>
         </div>
       </div>

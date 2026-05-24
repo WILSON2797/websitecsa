@@ -2,13 +2,13 @@
   <!-- PRODUCTS -->
   <section id="products" class="section">
     <div class="section-inner">
-      <div class="section-header reveal">
+      <div class="section-header" data-aos="fade-down">
         <div class="section-eyebrow">{{ content.products_eyebrow || 'LAYANAN & PRODUK' }}</div>
         <h2 class="section-title">{{ content.products_title || 'Kemampuan Stamping Kami' }}</h2>
         <p class="section-sub">{{ content.products_sub || 'Kami menyediakan solusi stamping lengkap mulai dari desain die hingga produksi massal.' }}</p>
       </div>
       <div class="product-grid">
-        <div v-for="(prod, idx) in productList" :key="idx" class="product-card reveal">
+        <div v-for="(prod, idx) in productList" :key="idx" class="product-card" data-aos="fade-up" :data-aos-delay="idx * 150">
           <div class="product-img" style="height: 160px; overflow: hidden; position: relative;">
             <img :src="getProductImg(prod, idx)" class="product-photo" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.35s ease;" :alt="prod.name" loading="lazy" decoding="async" />
             <div class="product-img-bg" style="position: absolute; inset: 0; background: linear-gradient(to bottom, transparent, rgba(15,42,66,0.25)); pointer-events: none;"></div>

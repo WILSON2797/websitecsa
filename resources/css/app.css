@@ -1388,16 +1388,58 @@ footer {
 .lightbox-caption p { margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.5; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 @keyframes lightboxZoom { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
-/* SCROLL REVEAL ANIMATIONS */
-.reveal {
+/* ==========================================================================
+   ADVANCED SCROLL ANIMATIONS (AOS STYLE)
+   ========================================================================== */
+[data-aos] {
   opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: var(--aos-duration, 800ms);
+  transition-delay: var(--aos-delay, 0ms);
 }
 
-.reveal.visible {
+[data-aos].aos-animate {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0) scale(1);
+}
+
+/* Fades */
+[data-aos="fade-up"] { transform: translate3d(0, 40px, 0); }
+[data-aos="fade-down"] { transform: translate3d(0, -40px, 0); }
+[data-aos="fade-right"] { transform: translate3d(-40px, 0, 0); }
+[data-aos="fade-left"] { transform: translate3d(40px, 0, 0); }
+
+/* Zooms */
+[data-aos="zoom-in"] { transform: scale(0.9); }
+[data-aos="zoom-in-up"] { transform: translate3d(0, 40px, 0) scale(0.9); }
+[data-aos="zoom-out"] { transform: scale(1.05); }
+
+/* Parallax Utilities */
+.parallax-bg {
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  will-change: transform;
+}
+
+/* ==========================================================================
+   VUE PAGE TRANSITIONS
+   ========================================================================== */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
 }
 
 /* SIMPLE SCROLLBAR */
