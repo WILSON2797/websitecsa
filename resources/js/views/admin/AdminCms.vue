@@ -223,22 +223,6 @@
             <label>Intro Teks Klien</label>
             <textarea v-model="cms.clients_intro" class="form-control" rows="3"></textarea>
           </div>
-
-          <h5 class="mt-4">Testimonial Utama</h5>
-          <div class="form-group">
-            <label>Kutipan Testimonial</label>
-            <textarea v-model="cms.testimonial_quote" class="form-control" rows="4"></textarea>
-          </div>
-          <div class="form-row">
-            <div class="form-group half">
-              <label>Penulis / Nama Tokoh</label>
-              <input type="text" v-model="cms.testimonial_author" class="form-control">
-            </div>
-            <div class="form-group half">
-              <label>Jabatan & Perusahaan</label>
-              <input type="text" v-model="cms.testimonial_role" class="form-control">
-            </div>
-          </div>
         </div>
 
         <!-- Section: Profile -->
@@ -288,6 +272,70 @@
               <input type="text" v-model="cms.contact_jam_2" class="form-control">
             </div>
           </div>
+
+          <h5 class="mt-4">Google Maps Embed URL</h5>
+          <p class="section-desc mb-2" style="font-size: 13px;">Buka Google Maps > Share > Embed a map > Copy HTML. Ambil HANYA isi dari atribut <b>src="..."</b> dan tempel di bawah ini.</p>
+          <div class="form-group">
+            <input type="text" v-model="cms.contact_map_embed" class="form-control" placeholder="https://www.google.com/maps/embed?pb=...">
+          </div>
+
+          <h5 class="mt-4">Social Media Links</h5>
+          <div class="form-row mt-3">
+            <div class="form-group half">
+              <label><i class="ti ti-brand-facebook" style="color:#1877F2"></i> Facebook URL</label>
+              <input type="text" v-model="cms.social_fb" class="form-control" placeholder="https://facebook.com/...">
+            </div>
+            <div class="form-group half">
+              <label><i class="ti ti-brand-instagram" style="color:#E4405F"></i> Instagram URL</label>
+              <input type="text" v-model="cms.social_ig" class="form-control" placeholder="https://instagram.com/...">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group half">
+              <label><i class="ti ti-brand-tiktok" style="color:#000000"></i> TikTok URL</label>
+              <input type="text" v-model="cms.social_tiktok" class="form-control" placeholder="https://tiktok.com/@...">
+            </div>
+            <div class="form-group half">
+              <label><i class="ti ti-brand-whatsapp" style="color:#25D366"></i> WhatsApp Number</label>
+              <input type="text" v-model="cms.social_wa" class="form-control" placeholder="628123456789 (Mulai dengan 62)">
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Footer -->
+        <div v-if="activeTab === 'footer'" class="tab-pane">
+          <h3><i class="ti ti-layout-bottombar"></i> Pengaturan Footer</h3>
+          <p class="section-desc">Atur semua teks di bagian bawah website: nama brand, tagline, layanan, dan teks copyright.</p>
+
+          <h5>Identitas Brand Footer</h5>
+          <div class="form-group mt-3">
+            <label>Nama Brand (di pojok kiri atas footer)</label>
+            <input type="text" v-model="cms.footer_brand_name" class="form-control" placeholder="PT. Cahaya Sentosa Abadi">
+          </div>
+          <div class="form-group">
+            <label>Tagline / Deskripsi Singkat</label>
+            <textarea v-model="cms.footer_tagline" class="form-control" rows="3"></textarea>
+          </div>
+
+          <h5 class="mt-4">Daftar Layanan (Kolom Layanan Footer)</h5>
+          <div class="list-editor">
+            <div v-for="(svc, index) in cms.footer_services" :key="'fs'+index" class="list-item">
+              <input type="text" v-model="cms.footer_services[index]" placeholder="ex: Progressive Stamping" class="form-control">
+              <button @click="removeSimpleItem('footer_services', index)" class="btn-danger-icon" title="Hapus"><i class="ti ti-trash"></i></button>
+            </div>
+            <button @click="addSimpleItem('footer_services')" class="btn-add-item"><i class="ti ti-plus"></i> Tambah Layanan</button>
+          </div>
+
+          <h5 class="mt-4">Teks Bawah (Copyright Bar)</h5>
+          <div class="form-group mt-3">
+            <label>Nama Perusahaan</label>
+            <small style="display:block; color:#6b7280; margin-bottom:8px;">Simbol © dan tahun berjalan akan otomatis ditambahkan. Cukup tulis nama perusahaan Anda.</small>
+            <input type="text" v-model="cms.footer_company_name" class="form-control" placeholder="PT. Cahaya Sentosa Abadi. All rights reserved.">
+          </div>
+          <div class="form-group">
+            <label>Subcopy (Teks kecil di sisi kanan)</label>
+            <input type="text" v-model="cms.footer_subcopy" class="form-control" placeholder="Precision Metal Stamping Solutions">
+          </div>
         </div>
 
       </div>
@@ -320,14 +368,16 @@ export default {
       { id: 'machine', label: 'Mesin', icon: 'ti-settings-2' },
       { id: 'quality', label: 'Kualitas', icon: 'ti-award' },
       { id: 'client', label: 'Klien', icon: 'ti-building-factory-2' },
-      { id: 'profile', label: 'Profil Perusahaan', icon: 'ti-building' }
+      { id: 'profile', label: 'Profil Perusahaan', icon: 'ti-building' },
+      { id: 'footer', label: 'Footer', icon: 'ti-layout-bottombar' }
     ];
 
     // Daftar kunci yang harus diproses sebagai JSON Array
     const jsonKeys = [
       'hero_stats', 'ticker_items', 
       'about_highlights', 'about_misi', 
-      'machines_facilities', 'quality_steps'
+      'machines_facilities', 'quality_steps',
+      'footer_services'
     ];
 
     const loadCms = async () => {

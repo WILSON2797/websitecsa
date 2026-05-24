@@ -966,6 +966,40 @@ img {
   margin-top: 3px;
 }
 
+.client-logo-wrap {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+
+.client-logo-img {
+  max-height: 56px;
+  max-width: 100%;
+  object-fit: contain;
+  filter: grayscale(30%);
+  transition: filter 0.2s;
+}
+
+.client-card:hover .client-logo-img {
+  filter: grayscale(0%);
+}
+
+.client-logo-placeholder {
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  color: white;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 700;
+}
+
 .testimonial {
   background: var(--navy);
   border-radius: 4px;
@@ -1340,17 +1374,18 @@ footer {
 .lightbox-nav.next { right: 30px; }
 .lightbox-content {
   position: relative; max-width: 80%; max-height: 85vh; display: flex; flex-direction: column;
-  background: #111827; border-radius: 8px; overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); animation: lightboxZoom 0.3s ease-out;
+  background: transparent; border-radius: 0; overflow: visible;
+  box-shadow: none; animation: lightboxZoom 0.3s ease-out;
+  align-items: center;
 }
-.lightbox-content img { max-width: 100%; max-height: calc(85vh - 100px); object-fit: contain; display: block; }
-.lightbox-caption { padding: 20px 25px; background: #1f2937; color: #f9fafb; }
+.lightbox-content img { max-width: 100%; max-height: calc(85vh - 80px); object-fit: contain; display: block; border-radius: 4px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+.lightbox-caption { padding: 15px 0 0 0; background: transparent; color: #f9fafb; text-align: center; width: 100%; }
 .caption-category {
-  display: inline-block; font-size: 12px; padding: 3px 8px; background: rgba(59, 130, 246, 0.2);
-  color: #60a5fa; border-radius: 4px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;
+  display: inline-block; font-size: 10px; padding: 2px 8px; background: rgba(255, 255, 255, 0.15);
+  color: #fff; border-radius: 4px; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;
 }
-.lightbox-caption h3 { margin: 0 0 5px 0; font-family: var(--font-head); font-size: 22px; }
-.lightbox-caption p { margin: 0; color: #9ca3af; font-size: 15px; line-height: 1.5; }
+.lightbox-caption h3 { margin: 0 0 4px 0; font-family: var(--font-head); font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+.lightbox-caption p { margin: 0; color: #d1d5db; font-size: 13px; line-height: 1.5; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
 @keyframes lightboxZoom { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
 
 /* SCROLL REVEAL ANIMATIONS */

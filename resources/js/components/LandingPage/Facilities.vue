@@ -29,7 +29,7 @@
             <p class="facility-card-desc">{{ fac.short_desc || fac.long_desc }}</p>
             
             <router-link :to="'/facility/' + (fac.id || idx)" class="btn-facility-detail">
-              Lihat Detail <i class="ti ti-chevron-right ms-1"></i>
+              View Details <i class="ti ti-chevron-right ms-1"></i>
             </router-link>
           </div>
         </div>

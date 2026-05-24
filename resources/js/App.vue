@@ -32,7 +32,7 @@
           </transition>
         </router-view>
 
-        <Footer :content="content" />
+        <Footer :content="content" :certificates="certificates" />
       </div>
     </template>
   </div>

@@ -10,14 +10,14 @@
       </div>
       <div class="nav-links">
         <router-link to="/" :class="{ 'active': activeSection === 'hero' }">Home</router-link>
-        <router-link to="/about" :class="{ 'active': activeSection === 'about' }">Tentang Kami</router-link>
-        <router-link to="/products" :class="{ 'active': activeSection === 'products' }">Produk</router-link>
-        <router-link to="/machines" :class="{ 'active': activeSection === 'machines' }">Mesin</router-link>
-        <router-link to="/facilities" :class="{ 'active': activeSection === 'facilities' }">Fasilitas</router-link>
-        <router-link to="/quality" :class="{ 'active': activeSection === 'quality' }">Kualitas</router-link>
-        <router-link to="/clients" :class="{ 'active': activeSection === 'clients' }">Klien</router-link>
-        <router-link to="/documentation" :class="{ 'active': activeSection === 'documentation' }">Dokumentasi</router-link>
-        <router-link to="/contact" :class="{ 'active': activeSection === 'contact' }">Kontak</router-link>
+        <router-link to="/about" :class="{ 'active': activeSection === 'about' }">About Us</router-link>
+        <router-link to="/products" :class="{ 'active': activeSection === 'products' }">Products</router-link>
+        <router-link to="/machines" :class="{ 'active': activeSection === 'machines' }">Machines</router-link>
+        <router-link to="/facilities" :class="{ 'active': activeSection === 'facilities' }">Facilities</router-link>
+        <router-link to="/quality" :class="{ 'active': activeSection === 'quality' }">Quality</router-link>
+        <router-link to="/clients" :class="{ 'active': activeSection === 'clients' }">Clients</router-link>
+        <router-link to="/documentation" :class="{ 'active': activeSection === 'documentation' }">Documentation</router-link>
+        <router-link to="/contact" :class="{ 'active': activeSection === 'contact' }">Contact</router-link>
       </div>
       <router-link class="nav-quote" to="/contact">Request Quote</router-link>
     </div>

@@ -13,8 +13,8 @@
         <p class="hero-tagline">{{ content.hero_tagline || 'SOLUTIONS FOR INDUSTRY' }}</p>
         <p class="hero-desc">{{ content.hero_desc || 'PT. Cahaya Sentosa Abadi adalah produsen komponen stamping logam presisi tinggi yang melayani industri otomotif, elektronik, dan manufaktur sejak tahun 1998. Berlokasi di Kawasan Industri MM2100, Cikarang, Jawa Barat.' }}</p>
         <div class="hero-btns">
-          <a href="#products" class="btn-primary"><i class="ti ti-packages" aria-hidden="true"></i> Lihat Produk</a>
-          <a href="#contact" class="btn-ghost"><i class="ti ti-message" aria-hidden="true"></i> Hubungi Kami</a>
+          <a href="#products" class="btn-primary"><i class="ti ti-packages" aria-hidden="true"></i> View Products</a>
+          <a href="#contact" class="btn-ghost"><i class="ti ti-message" aria-hidden="true"></i> Contact Us</a>
         </div>
       </div>
       

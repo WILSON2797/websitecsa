@@ -24,7 +24,7 @@
             </div>
             
             <router-link :to="'/product/' + idx" class="btn-product-detail">
-              Lihat Spesifikasi <i class="ti ti-chevron-right ms-1"></i>
+              View Specifications <i class="ti ti-chevron-right ms-1"></i>
             </router-link>
           </div>
         </div>

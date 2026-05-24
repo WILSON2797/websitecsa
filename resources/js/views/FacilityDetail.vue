@@ -72,13 +72,13 @@
         <div class="rounded-3xl text-center position-relative overflow-hidden" style="background: var(--gray50); border: 1px solid var(--gray100); border-radius: 6px; padding: 36px; text-align: center; color: var(--navy); margin-bottom: 32px; box-shadow: 0 4px 20px rgba(15, 42, 66, 0.02);">
           <div class="blueprint-grid-overlay" style="opacity: 0.04;"></div>
           <div class="position-relative z-1" style="max-width: 700px; margin: 0 auto;">
-            <h3 class="font-headline-md mb-2" style="font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--navy);">Ingin Mengunjungi Fasilitas Kami?</h3>
+            <h3 class="font-headline-md mb-2" style="font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--navy);">Want to See Our Production Facilities in Person?</h3>
             <p class="font-body-md mb-3" style="font-size: 14px; margin-bottom: 16px; color: var(--gray700); opacity: 0.9;">
-              Hubungi tim marketing kami untuk menjadwalkan Factory Audit (kunjungan pabrik) secara langsung di kawasan MM2100 Cikarang Barat.
+              Contact our marketing team to schedule a Factory Audit directly at {{ content.contact_alamat || 'Kawasan MM2100 Cikarang Barat' }}.
             </p>
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 16px;">
               <router-link to="/contact" class="btn-primary-dark" style="padding: 10px 24px; font-size: 12.5px; text-decoration: none;">
-                <i class="ti ti-mail me-2"></i> Kirim Inquiry (Email)
+                <i class="ti ti-mail me-2"></i> Send Inquiry (Email)
               </router-link>
               <a href="https://api.whatsapp.com/send?phone=6281289901234&text=Halo%20PT%20Cahaya%20Sentosa%20Abadi%2C%20saya%20tertarik%20untuk%20berkunjung." target="_blank" class="btn-whatsapp" style="padding: 12px 28px; font-size: 13px; text-decoration: none;">
                 <i class="ti ti-brand-whatsapp me-2"></i> Chat via WhatsApp

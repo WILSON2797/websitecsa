@@ -43,6 +43,30 @@
               <div class="contact-value-sub">{{ content.contact_jam_2 || 'Sabtu: 08.00 — 13.00 WIB' }}</div>
             </div>
           </div>
+          
+          <!-- Social Media Icons -->
+          <div class="social-media-bar" style="margin-top: 32px; display: flex; gap: 16px; align-items: center;">
+            <a v-if="content.social_fb" :href="content.social_fb" target="_blank" class="social-icon-btn" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#1877F2; color:white; font-size:20px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"><i class="ti ti-brand-facebook"></i></a>
+            
+            <a v-if="content.social_ig" :href="content.social_ig" target="_blank" class="social-icon-btn" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color:white; font-size:20px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"><i class="ti ti-brand-instagram"></i></a>
+            
+            <a v-if="content.social_tiktok" :href="content.social_tiktok" target="_blank" class="social-icon-btn" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#000000; color:white; font-size:20px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"><i class="ti ti-brand-tiktok"></i></a>
+            
+            <a v-if="content.social_wa" :href="'https://wa.me/' + content.social_wa" target="_blank" class="social-icon-btn" style="display:flex; align-items:center; justify-content:center; width:44px; height:44px; border-radius:50%; background:#25D366; color:white; font-size:20px; transition:transform 0.2s; text-decoration:none;" onmouseover="this.style.transform='translateY(-3px)'" onmouseout="this.style.transform='translateY(0)'"><i class="ti ti-brand-whatsapp"></i></a>
+          </div>
+
+          <!-- Google Maps Embed -->
+          <div class="contact-map" style="margin-top: 24px; border-radius: 8px; overflow: hidden; height: 180px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); border: 1px solid var(--gray100);">
+            <iframe 
+              :src="content.contact_map_embed || 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3965.748644503706!2d107.0863004147696!3d-6.296683895442533!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e698fd447af7733%3A0xc6ed7ed9ddc8f2ba!2sKawasan%20Industri%20MM2100!5e0!3m2!1sen!2sid!4v1655444002621!5m2!1sen!2sid'" 
+              width="100%" 
+              height="100%" 
+              style="border:0;" 
+              allowfullscreen="" 
+              loading="lazy" 
+              referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+          </div>
         </div>
         
         <!-- Quote Form Column (Right) -->

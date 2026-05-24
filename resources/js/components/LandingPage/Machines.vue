@@ -29,7 +29,7 @@
             <p class="machine-card-desc">{{ m.shortDesc }}</p>
             
             <router-link :to="'/machine/' + idx" class="btn-machine-detail">
-              Lihat Detail <i class="ti ti-chevron-right ms-1"></i>
+              View Details <i class="ti ti-chevron-right ms-1"></i>
             </router-link>
           </div>
         </div>

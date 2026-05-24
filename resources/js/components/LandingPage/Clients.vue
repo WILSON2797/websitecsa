@@ -23,17 +23,12 @@
       <!-- Clients Grid -->
       <div class="clients-grid reveal">
         <div v-for="(c, idx) in filteredClients" :key="idx" class="client-card">
+          <div class="client-logo-wrap">
+            <img v-if="c.logo_path" :src="c.logo_path" :alt="c.name" class="client-logo-img">
+            <div v-else class="client-logo-placeholder">{{ c.name.charAt(0) }}</div>
+          </div>
           <div class="client-name">{{ c.name }}</div>
           <div class="client-industry">{{ c.industry }}</div>
-        </div>
-      </div>
-      
-      <!-- Testimonial Block -->
-      <div class="testimonial reveal">
-        <div class="testi-quote">{{ content.testimonial_quote || 'PT. Cahaya Sentosa Abadi telah menjadi mitra stamping kami selama lebih dari 10 tahun. Kualitas komponen yang konsisten, pengiriman tepat waktu, dan responsivitas tim mereka terhadap perubahan spesifikasi menjadikan mereka mitra yang sangat kami andalkan.' }}</div>
-        <div class="testi-author">
-          <div class="testi-name">{{ content.testimonial_author || 'Budi Santoso' }}</div>
-          <div class="testi-role">{{ content.testimonial_role || 'Procurement Manager, PT Astra Honda Motor' }}</div>
         </div>
       </div>
     </div>
@@ -52,8 +47,8 @@ export default {
     }
   },
   setup(props) {
-    const activeTab = ref('SEMUA');
-    const tabs = ['SEMUA', 'OTOMOTIF', 'ELEKTRONIK & ELEKTRIKAL'];
+    const activeTab = ref('ALL');
+    const tabs = ['ALL', 'AUTOMOTIVE', 'ELECTRONICS & ELECTRICAL'];
 
     const titleHtml = computed(() => {
       const rawTitle = props.content.clients_title || 'Dipercaya Oleh<br>Perusahaan Terkemuka';
@@ -71,25 +66,25 @@ export default {
         }
       }
       return [
-        { name: 'Toyota', industry: 'Otomotif' },
-        { name: 'Astra Honda', industry: 'Otomotif' },
-        { name: 'Denso', industry: 'Komponen Otomotif' },
-        { name: 'Yamaha', industry: 'Otomotif' },
-        { name: 'Panasonic', industry: 'Elektronik' },
-        { name: 'Samsung SDI', industry: 'Baterai EV' },
-        { name: 'Schneider', industry: 'Elektrikal' },
-        { name: 'Mitsubishi', industry: 'Otomotif & Elektrik' }
+        { name: 'Toyota', industry: 'Automotive' },
+        { name: 'Astra Honda', industry: 'Automotive' },
+        { name: 'Denso', industry: 'Automotive Parts' },
+        { name: 'Yamaha', industry: 'Automotive' },
+        { name: 'Panasonic', industry: 'Electronics' },
+        { name: 'Samsung SDI', industry: 'EV Battery' },
+        { name: 'Schneider', industry: 'Electrical' },
+        { name: 'Mitsubishi', industry: 'Automotive & Electrical' }
       ];
     });
 
     const filteredClients = computed(() => {
       const list = clientList.value;
-      if (activeTab.value === 'SEMUA') {
+      if (activeTab.value === 'ALL') {
         return list;
-      } else if (activeTab.value === 'OTOMOTIF') {
-        return list.filter(c => c.industry.toLowerCase().includes('otomotif') || c.industry.toLowerCase().includes('komponen'));
+      } else if (activeTab.value === 'AUTOMOTIVE') {
+        return list.filter(c => c.industry.toLowerCase().includes('automotive') || c.industry.toLowerCase().includes('parts'));
       } else {
-        return list.filter(c => c.industry.toLowerCase().includes('elektronik') || c.industry.toLowerCase().includes('elektrik') || c.industry.toLowerCase().includes('baterai'));
+        return list.filter(c => c.industry.toLowerCase().includes('electronics') || c.industry.toLowerCase().includes('electrical') || c.industry.toLowerCase().includes('battery') || c.industry.toLowerCase().includes('ev'));
       }
     });
 

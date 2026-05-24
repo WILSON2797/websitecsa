@@ -115,13 +115,13 @@
         <div class="rounded-3xl text-center position-relative overflow-hidden" style="background: var(--gray50); border: 1px solid var(--gray100); border-radius: 6px; padding: 36px; text-align: center; color: var(--navy); margin-bottom: 32px; box-shadow: 0 4px 20px rgba(15, 42, 66, 0.02);">
           <div class="blueprint-grid-overlay" style="opacity: 0.04;"></div>
           <div class="position-relative z-1" style="max-width: 700px; margin: 0 auto;">
-            <h3 class="font-headline-md mb-2" style="font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--navy);">Butuh Konsultasi Stamping Khusus?</h3>
+            <h3 class="font-headline-md mb-2" style="font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--navy);">Need Custom Stamping Consultation?</h3>
             <p class="font-body-md mb-3" style="font-size: 14px; margin-bottom: 16px; color: var(--gray700); opacity: 0.9;">
-              Kirimkan pertanyaan atau blueprint gambar teknik produk Anda langsung ke tim estimasi teknik kami. Kami siap memberikan solusi DFM yang tepat guna.
+              Send your inquiries or product technical drawing blueprints directly to our engineering estimation team. We are ready to provide the right DFM (Design for Manufacturing) solutions tailored to your needs.
             </p>
             <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-top: 16px;">
               <router-link to="/contact" class="btn-primary-dark" style="padding: 10px 24px; font-size: 12.5px; text-decoration: none;">
-                <i class="ti ti-mail me-2"></i> Kirim Inquiry (Email)
+                <i class="ti ti-mail me-2"></i> Send Inquiry (Email)
               </router-link>
               <a :href="waUrl" target="_blank" class="btn-whatsapp" style="padding: 12px 28px; font-size: 13px; text-decoration: none;">
                 <i class="ti ti-brand-whatsapp me-2"></i> Chat via WhatsApp
