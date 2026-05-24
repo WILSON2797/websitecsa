@@ -44,7 +44,7 @@ class ClientController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('clients/' . $filename, (string) $encoded);
-            $validated['logo_path'] = '/storage/clients/' . $filename;
+            $validated['logo_path'] = '/uploads/clients/' . $filename;
         }
 
         $client = Client::create($validated);
@@ -63,7 +63,7 @@ class ClientController extends Controller
 
         if ($request->hasFile('logo_path')) {
             if ($client->logo_path) {
-                $oldPath = str_replace('/storage/', '', $client->logo_path);
+                $oldPath = str_replace('/uploads/', '', $client->logo_path);
                 Storage::disk('public')->delete($oldPath);
             }
             $manager = new ImageManager(new Driver());
@@ -71,10 +71,10 @@ class ClientController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('clients/' . $filename, (string) $encoded);
-            $validated['logo_path'] = '/storage/clients/' . $filename;
+            $validated['logo_path'] = '/uploads/clients/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
             if ($client->logo_path) {
-                $oldPath = str_replace('/storage/', '', $client->logo_path);
+                $oldPath = str_replace('/uploads/', '', $client->logo_path);
                 Storage::disk('public')->delete($oldPath);
             }
             $validated['logo_path'] = null;
@@ -88,7 +88,7 @@ class ClientController extends Controller
     {
         $client = Client::findOrFail($id);
         if ($client->logo_path) {
-            $oldPath = str_replace('/storage/', '', $client->logo_path);
+            $oldPath = str_replace('/uploads/', '', $client->logo_path);
             Storage::disk('public')->delete($oldPath);
         }
         $client->delete();

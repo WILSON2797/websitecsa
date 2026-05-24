@@ -47,7 +47,7 @@ class FacilityController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('facilities/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/facilities/' . $filename;
+            $validated['img'] = '/uploads/facilities/' . $filename;
         }
 
         $facility = Facility::create($validated);
@@ -69,7 +69,7 @@ class FacilityController extends Controller
 
         if ($request->hasFile('img')) {
             if ($facility->img) {
-                $oldPath = str_replace('/storage/', '', $facility->img);
+                $oldPath = str_replace('/uploads/', '', $facility->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $manager = new ImageManager(new Driver());
@@ -77,10 +77,10 @@ class FacilityController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('facilities/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/facilities/' . $filename;
+            $validated['img'] = '/uploads/facilities/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
             if ($facility->img) {
-                $oldPath = str_replace('/storage/', '', $facility->img);
+                $oldPath = str_replace('/uploads/', '', $facility->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $validated['img'] = null;
@@ -94,7 +94,7 @@ class FacilityController extends Controller
     {
         $facility = Facility::findOrFail($id);
         if ($facility->img) {
-            $oldPath = str_replace('/storage/', '', $facility->img);
+            $oldPath = str_replace('/uploads/', '', $facility->img);
             Storage::disk('public')->delete($oldPath);
         }
         $facility->delete();

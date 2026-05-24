@@ -36,7 +36,7 @@ class CertificateController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('certificates/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/certificates/' . $filename;
+            $validated['img'] = '/uploads/certificates/' . $filename;
         }
 
         if (!isset($validated['order']) || is_null($validated['order'])) {
@@ -69,7 +69,7 @@ class CertificateController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('certificates/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/certificates/' . $filename;
+            $validated['img'] = '/uploads/certificates/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
             if ($certificate->img && file_exists(public_path($certificate->img))) {
                 unlink(public_path($certificate->img));

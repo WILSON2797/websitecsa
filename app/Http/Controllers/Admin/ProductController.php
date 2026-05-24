@@ -54,7 +54,7 @@ class ProductController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('products/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/products/' . $filename;
+            $validated['img'] = '/uploads/products/' . $filename;
         }
         if (!isset($validated['specs']) || is_null($validated['specs'])) {
             $validated['specs'] = [];
@@ -89,7 +89,7 @@ class ProductController extends Controller
 
         if ($request->hasFile('img')) {
             if ($product->img) {
-                $oldPath = str_replace('/storage/', '', $product->img);
+                $oldPath = str_replace('/uploads/', '', $product->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $manager = new ImageManager(new Driver());
@@ -97,10 +97,10 @@ class ProductController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('products/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/products/' . $filename;
+            $validated['img'] = '/uploads/products/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
             if ($product->img) {
-                $oldPath = str_replace('/storage/', '', $product->img);
+                $oldPath = str_replace('/uploads/', '', $product->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $validated['img'] = null;
@@ -120,7 +120,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
         if ($product->img) {
-            $oldPath = str_replace('/storage/', '', $product->img);
+            $oldPath = str_replace('/uploads/', '', $product->img);
             Storage::disk('public')->delete($oldPath);
         }
         $product->delete();

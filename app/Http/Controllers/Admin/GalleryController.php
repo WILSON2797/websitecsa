@@ -31,7 +31,7 @@ class GalleryController extends Controller
             'title' => $request->title,
             'category' => $request->category ?? 'Operations',
             'description' => $request->description,
-            'image_url' => '/storage/' . $path,
+            'image_url' => '/uploads/' . $path,
             'display_order' => $request->display_order ?? 0
         ]);
 
@@ -53,13 +53,13 @@ class GalleryController extends Controller
             $request->validate(['image' => 'image|max:5120']);
             
             // Delete old image
-            $oldPath = str_replace('/storage/', '', $gallery->image_url);
+            $oldPath = str_replace('/uploads/', '', $gallery->image_url);
             if (Storage::disk('public')->exists($oldPath)) {
                 Storage::disk('public')->delete($oldPath);
             }
             
             $path = $request->file('image')->store('galleries', 'public');
-            $gallery->image_url = '/storage/' . $path;
+            $gallery->image_url = '/uploads/' . $path;
         }
 
         $gallery->title = $request->title;
@@ -81,7 +81,7 @@ class GalleryController extends Controller
         $gallery = Gallery::findOrFail($id);
         
         // Delete image
-        $oldPath = str_replace('/storage/', '', $gallery->image_url);
+        $oldPath = str_replace('/uploads/', '', $gallery->image_url);
         if (Storage::disk('public')->exists($oldPath)) {
             Storage::disk('public')->delete($oldPath);
         }

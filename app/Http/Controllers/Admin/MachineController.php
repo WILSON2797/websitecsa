@@ -51,7 +51,7 @@ class MachineController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('machines/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/machines/' . $filename;
+            $validated['img'] = '/uploads/machines/' . $filename;
         }
 
         $machine = Machine::create($validated);
@@ -77,7 +77,7 @@ class MachineController extends Controller
 
         if ($request->hasFile('img')) {
             if ($machine->img) {
-                $oldPath = str_replace('/storage/', '', $machine->img);
+                $oldPath = str_replace('/uploads/', '', $machine->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $manager = new ImageManager(new Driver());
@@ -85,10 +85,10 @@ class MachineController extends Controller
             $encoded = $image->toWebp(80);
             $filename = uniqid() . '.webp';
             Storage::disk('public')->put('machines/' . $filename, (string) $encoded);
-            $validated['img'] = '/storage/machines/' . $filename;
+            $validated['img'] = '/uploads/machines/' . $filename;
         } elseif ($request->has('remove_img') && $request->remove_img == '1') {
             if ($machine->img) {
-                $oldPath = str_replace('/storage/', '', $machine->img);
+                $oldPath = str_replace('/uploads/', '', $machine->img);
                 Storage::disk('public')->delete($oldPath);
             }
             $validated['img'] = null;
@@ -102,7 +102,7 @@ class MachineController extends Controller
     {
         $machine = Machine::findOrFail($id);
         if ($machine->img) {
-            $oldPath = str_replace('/storage/', '', $machine->img);
+            $oldPath = str_replace('/uploads/', '', $machine->img);
             Storage::disk('public')->delete($oldPath);
         }
         $machine->delete();

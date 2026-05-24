@@ -97,7 +97,7 @@ export default {
   width: auto;
   object-fit: contain;
   border-radius: 6px;
-  background-color: #ffffff;
+  background-color: #f1f1f1;
   padding: 4px 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
