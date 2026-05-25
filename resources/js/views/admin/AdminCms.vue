@@ -230,7 +230,21 @@
           <h3><i class="ti ti-building"></i> Profil & Kontak Global</h3>
           <p class="section-desc">Atur identitas perusahaan, alamat, dan kontak yang berlaku global di seluruh website.</p>
 
-          <h5>Alamat & Kontak Utama</h5>
+          <h5>Pengantar Seksi Kontak</h5>
+          <div class="form-group mt-3">
+            <label>Eyebrow (Label Kecil)</label>
+            <input type="text" v-model="cms.contact_eyebrow" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Judul Utama</label>
+            <input type="text" v-model="cms.contact_title" class="form-control">
+          </div>
+          <div class="form-group">
+            <label>Sub-judul / Deskripsi Singkat</label>
+            <textarea v-model="cms.contact_sub" class="form-control" rows="3"></textarea>
+          </div>
+
+          <h5 class="mt-4">Alamat & Kontak Utama</h5>
           <div class="form-group mt-3">
             <label>Alamat Baris 1</label>
             <input type="text" v-model="cms.contact_alamat" class="form-control">
@@ -614,77 +628,5 @@ h5.mt-4 {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* Dynamic List Editor Styles */
-.list-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.list-item {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  background: #f9fafb;
-  padding: 10px;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  animation: slideIn 0.2s ease-out;
-}
-
-@keyframes slideIn {
-  from { opacity: 0; transform: translateX(-10px); }
-  to { opacity: 1; transform: translateX(0); }
-}
-
-.list-inputs {
-  flex: 1;
-  margin-bottom: 0 !important;
-}
-
-.complex-item {
-  flex-direction: row;
-}
-
-.complex-inputs {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.btn-danger-icon {
-  background: #fee2e2;
-  color: #ef4444;
-  border: none;
-  border-radius: 4px;
-  padding: 10px 12px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.btn-danger-icon:hover {
-  background: #fca5a5;
-  color: #b91c1c;
-}
-
-.btn-add-item {
-  background: #eff6ff;
-  color: #2563eb;
-  border: 1px dashed #bfdbfe;
-  padding: 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.btn-add-item:hover {
-  background: #dbeafe;
-  border-color: #93c5fd;
-}
 </style>
+

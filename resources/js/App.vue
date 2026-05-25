@@ -202,6 +202,14 @@ export default {
 </script>
 
 <style>
+.app-root-frame {
+  min-height: 100vh;
+}
+.app-content-shell {
+  overflow-x: hidden;
+  width: 100%;
+}
+
 /* Intro overlay transition */
 .intro-fade-leave-active {
   transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);

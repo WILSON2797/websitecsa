@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PT. Cahaya Sentosa Abadi — Produsen komponen stamping logam presisi tinggi melayani industri otomotif, elektronik, dan manufaktur sejak tahun 1998.">
-    <meta name="keywords" content="Metal Stamping, Progressive Die, Automotive Stamping, Precision Metal, Cahaya Sentosa Abadi, Manufacturing, Cikarang, MM2100">
+    <meta name="description" content="PT. Cahaya Sentosa Abadi — Produsen komponen stamping logam presisi tinggi melayani industri otomotif, elektronik, dan manufaktur.">
+    <meta name="keywords" content="Metal Stamping, Progressive Die, Automotive Stamping, Precision Metal, Cahaya Sentosa Abadi, Manufacturing, Karawang Jawabarat>
     <meta name="author" content="PT. Cahaya Sentosa Abadi">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 

@@ -96,9 +96,12 @@ export default {
   height: 40px;
   width: auto;
   object-fit: contain;
-  border-radius: 6px;
-  background-color: #f1f1f1;
+  /* border-radius: 6px;
+  background-color: #f1f1f1; */
   padding: 4px 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 0.1px solid #f1f1f1d2;
+  border-radius: 8px;
+  
 }
-</style>
+</style>  

@@ -42,6 +42,17 @@
             <textarea v-model="form.desc" required class="form-control" rows="3"></textarea>
           </div>
 
+          <div class="form-group">
+            <label>Tag / Spesifikasi Singkat (Maks 3-4 disarankan)</label>
+            <div class="list-editor">
+              <div v-for="(item, index) in form.specs" :key="'sp'+index" class="list-item">
+                <input type="text" v-model="form.specs[index]" placeholder="e.g. Toleransi ±0.05mm" class="form-control">
+                <button type="button" @click="removeSpec(index)" class="btn-danger-icon" title="Hapus"><i class="ti ti-trash"></i></button>
+              </div>
+              <button type="button" @click="addSpec" class="btn-add-item"><i class="ti ti-plus"></i> Tambah Tag</button>
+            </div>
+          </div>
+
           <div class="form-row">
             <div class="form-group half">
               <label>Toleransi</label>
@@ -81,16 +92,63 @@
 
           <div class="form-row">
             <div class="form-group half">
-              <label>Ikon Tabler</label>
+              <label>Ikon Tabler (Opsional)</label>
               <IconPicker v-model="form.icon" />
             </div>
             <div class="form-group half">
-              <label>Gambar Produk</label>
-              <input type="file" @change="handleFileUpload" class="form-control" accept="image/*">
+              <label>Gambar Utama (Thumbnail Depan)</label>
+              <input type="file" @change="handleFileUpload" class="form-control" accept="image/*" ref="mainImgInput">
               <div v-if="form.previewImg" style="margin-top:15px; display: flex; align-items: flex-start;">
                 <div style="position: relative; display: inline-block; width: max-content;">
                   <img :src="form.previewImg" alt="Preview" style="max-height: 80px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; display: block;">
                   <button type="button" @click="removeImage" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <hr style="margin: 20px 0; border-color: #e2e8f0;" />
+          <h4 style="margin-bottom: 15px; font-size: 14px; font-weight: 600; color: var(--navy);">Gambar Detail (Slider Halaman Produk)</h4>
+          
+          <div class="form-row">
+            <!-- Detail Image 1 -->
+            <div class="form-group" style="width: 32%;">
+              <label>Gambar Slider 1</label>
+              <input type="file" @change="(e) => handleDetailUpload(e, 1)" class="form-control" accept="image/*" ref="detailImgInput1">
+              <div v-if="form.previewDetailImg1" style="margin-top:15px;">
+                <div style="position: relative; display: inline-block;">
+                  <img :src="form.previewDetailImg1" style="max-height: 70px; border-radius: 4px; border: 1px solid #ddd; padding: 2px;">
+                  <button type="button" @click="removeDetailImage(1)" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detail Image 2 -->
+            <div class="form-group" style="width: 32%;">
+              <label>Gambar Slider 2</label>
+              <input type="file" @change="(e) => handleDetailUpload(e, 2)" class="form-control" accept="image/*" ref="detailImgInput2">
+              <div v-if="form.previewDetailImg2" style="margin-top:15px;">
+                <div style="position: relative; display: inline-block;">
+                  <img :src="form.previewDetailImg2" style="max-height: 70px; border-radius: 4px; border: 1px solid #ddd; padding: 2px;">
+                  <button type="button" @click="removeDetailImage(2)" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;">
+                    <i class="ti ti-x"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Detail Image 3 -->
+            <div class="form-group" style="width: 32%;">
+              <label>Gambar Slider 3</label>
+              <input type="file" @change="(e) => handleDetailUpload(e, 3)" class="form-control" accept="image/*" ref="detailImgInput3">
+              <div v-if="form.previewDetailImg3" style="margin-top:15px;">
+                <div style="position: relative; display: inline-block;">
+                  <img :src="form.previewDetailImg3" style="max-height: 70px; border-radius: 4px; border: 1px solid #ddd; padding: 2px;">
+                  <button type="button" @click="removeDetailImage(3)" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px;">
                     <i class="ti ti-x"></i>
                   </button>
                 </div>
@@ -130,6 +188,11 @@ export default {
     const loading = ref(true);
     const saving = ref(false);
     const showModal = ref(false);
+
+    const mainImgInput = ref(null);
+    const detailImgInput1 = ref(null);
+    const detailImgInput2 = ref(null);
+    const detailImgInput3 = ref(null);
 
     const columns = [
       {
@@ -221,13 +284,20 @@ export default {
       icon: '',
       imgFile: null,
       previewImg: '',
+      detailImgFile1: null,
+      previewDetailImg1: '',
+      detailImgFile2: null,
+      previewDetailImg2: '',
+      detailImgFile3: null,
+      previewDetailImg3: '',
       tolerance: '',
       capacity: '',
       speed: '',
       volume: '',
       auxiliary: '',
       safety: '',
-      typical: ''
+      typical: '',
+      specs: []
     };
 
     const form = ref({ ...defaultForm });
@@ -254,15 +324,46 @@ export default {
 
     const openModal = (item = null) => {
       if (item) {
-        form.value = { ...item, imgFile: null, previewImg: item.img, remove_img: 0 };
+        form.value = { 
+          ...item, 
+          imgFile: null, 
+          previewImg: item.img, 
+          remove_img: 0,
+          detailImgFile1: null,
+          previewDetailImg1: item.detail_img1,
+          remove_detail_img1: 0,
+          detailImgFile2: null,
+          previewDetailImg2: item.detail_img2,
+          remove_detail_img2: 0,
+          detailImgFile3: null,
+          previewDetailImg3: item.detail_img3,
+          remove_detail_img3: 0,
+          specs: item.specs ? [...item.specs] : [] 
+        };
       } else {
-        form.value = { ...defaultForm, remove_img: 0 };
+        form.value = { 
+          ...defaultForm, 
+          remove_img: 0, 
+          remove_detail_img1: 0,
+          remove_detail_img2: 0,
+          remove_detail_img3: 0,
+          specs: [] 
+        };
       }
       showModal.value = true;
     };
 
     const closeModal = () => {
       showModal.value = false;
+    };
+
+    const addSpec = () => {
+      if (!form.value.specs) form.value.specs = [];
+      form.value.specs.push('');
+    };
+
+    const removeSpec = (index) => {
+      form.value.specs.splice(index, 1);
     };
 
     const handleFileUpload = async (event) => {
@@ -274,18 +375,55 @@ export default {
           return;
         }
         
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
         try {
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: 1920,
-            useWebWorker: true
-          };
+          const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
           const compressedFile = await imageCompression(file, options);
           form.value.imgFile = compressedFile;
           form.value.previewImg = URL.createObjectURL(compressedFile);
+          Swal.close();
         } catch (error) {
           console.error('Compression error:', error);
-          Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
+          Swal.fire('Error', 'Gagal mengompres gambar.', 'error');
+        }
+      }
+    };
+
+    const handleDetailUpload = async (event, index) => {
+      const file = event.target.files[0];
+      if (file) {
+        if (file.size > 15 * 1024 * 1024) {
+          Swal.fire('Error', 'Ukuran gambar maksimal 15MB!', 'error');
+          event.target.value = '';
+          return;
+        }
+        
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
+        try {
+          const options = { maxSizeMB: 1, maxWidthOrHeight: 1920, useWebWorker: true };
+          const compressedFile = await imageCompression(file, options);
+          
+          // Debugging log to ensure file is processed correctly
+          console.log(`Compressed detail image ${index}:`, compressedFile);
+
+          form.value[`detailImgFile${index}`] = compressedFile;
+          form.value[`previewDetailImg${index}`] = URL.createObjectURL(compressedFile);
+          Swal.close();
+        } catch (error) {
+          console.error(error);
+          Swal.fire('Error', 'Gagal mengompres gambar detail.', 'error');
         }
       }
     };
@@ -294,19 +432,31 @@ export default {
       form.value.imgFile = null;
       form.value.previewImg = '';
       form.value.remove_img = 1;
-      // reset file input
-      const fileInput = document.querySelector('input[type="file"]');
-      if (fileInput) fileInput.value = '';
+      if (mainImgInput.value) mainImgInput.value.value = '';
+    };
+
+    const removeDetailImage = (index) => {
+      form.value[`detailImgFile${index}`] = null;
+      form.value[`previewDetailImg${index}`] = '';
+      form.value[`remove_detail_img${index}`] = 1;
+      if (index === 1 && detailImgInput1.value) detailImgInput1.value.value = '';
+      if (index === 2 && detailImgInput2.value) detailImgInput2.value.value = '';
+      if (index === 3 && detailImgInput3.value) detailImgInput3.value.value = '';
     };
 
     const saveItem = async () => {
       saving.value = true;
+      Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Sedang mengunggah data ke server.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
       try {
         const formData = new FormData();
         Object.keys(form.value).forEach(key => {
-          if (key !== 'imgFile' && key !== 'previewImg' && key !== 'img' && key !== 'remove_img' && form.value[key] !== null) {
+          if (!key.startsWith('imgFile') && !key.startsWith('preview') && key !== 'img' && !key.startsWith('remove_') && !key.startsWith('detailImgFile') && form.value[key] !== null) {
             if (Array.isArray(form.value[key])) {
-              // Appending an array requires multiple appends with [] syntax for Laravel
               form.value[key].forEach(item => {
                 formData.append(`${key}[]`, item);
               });
@@ -316,11 +466,12 @@ export default {
           }
         });
 
-        if (form.value.imgFile) {
-          formData.append('img', form.value.imgFile);
-        }
-        if (form.value.remove_img) {
-          formData.append('remove_img', 1);
+        if (form.value.imgFile) formData.append('img', form.value.imgFile);
+        if (form.value.remove_img) formData.append('remove_img', 1);
+
+        for (let i = 1; i <= 3; i++) {
+          if (form.value[`detailImgFile${i}`]) formData.append(`detail_img${i}`, form.value[`detailImgFile${i}`]);
+          if (form.value[`remove_detail_img${i}`]) formData.append(`remove_detail_img${i}`, 1);
         }
 
         if (form.value.id) {
@@ -379,7 +530,8 @@ export default {
 
     return {
       products, loading, saving, showModal, form, columns, pagination,
-      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem
+      openModal, closeModal, handleFileUpload, handleDetailUpload, removeImage, removeDetailImage, saveItem, deleteItem, addSpec, removeSpec,
+      mainImgInput, detailImgInput1, detailImgInput2, detailImgInput3
     };
   }
 }
@@ -502,4 +654,6 @@ export default {
     gap: 0;
   }
 }
+
 </style>
+

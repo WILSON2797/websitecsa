@@ -177,4 +177,69 @@ export default {
   display: flex;
   gap: 8px;
 }
+
+/* Dynamic List Editor Styles */
+.list-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.list-item {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  background: #f9fafb;
+  padding: 10px;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  animation: slideIn 0.2s ease-out;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.list-inputs {
+  flex: 1;
+  margin-bottom: 0 !important;
+}
+.complex-item {
+  flex-direction: row;
+}
+.complex-inputs {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.btn-danger-icon {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  border-radius: 4px;
+  padding: 10px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-danger-icon:hover {
+  background: #fca5a5;
+  color: #b91c1c;
+}
+.btn-add-item {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px dashed #bfdbfe;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+.btn-add-item:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
 </style>

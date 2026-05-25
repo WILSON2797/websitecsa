@@ -39,6 +39,9 @@ class ProductController extends Controller
             'specs' => 'nullable|array',
             'icon' => 'nullable|string|max:255',
             'img' => 'nullable|image|max:15360', // up to 15MB
+            'detail_img1' => 'nullable|image|max:15360',
+            'detail_img2' => 'nullable|image|max:15360',
+            'detail_img3' => 'nullable|image|max:15360',
             'tolerance' => 'nullable|string|max:255',
             'capacity' => 'nullable|string|max:255',
             'speed' => 'nullable|string|max:255',
@@ -56,6 +59,18 @@ class ProductController extends Controller
             Storage::disk('public')->put('products/' . $filename, (string) $encoded);
             $validated['img'] = '/uploads/products/' . $filename;
         }
+
+        foreach (['detail_img1', 'detail_img2', 'detail_img3'] as $field) {
+            if ($request->hasFile($field)) {
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($request->file($field));
+                $encoded = $image->toWebp(80);
+                $filename = uniqid() . '_' . $field . '.webp';
+                Storage::disk('public')->put('products/' . $filename, (string) $encoded);
+                $validated[$field] = '/uploads/products/' . $filename;
+            }
+        }
+
         if (!isset($validated['specs']) || is_null($validated['specs'])) {
             $validated['specs'] = [];
         }
@@ -78,6 +93,9 @@ class ProductController extends Controller
             'specs' => 'nullable|array',
             'icon' => 'nullable|string|max:255',
             'img' => 'nullable|image|max:15360', // up to 15MB
+            'detail_img1' => 'nullable|image|max:15360',
+            'detail_img2' => 'nullable|image|max:15360',
+            'detail_img3' => 'nullable|image|max:15360',
             'tolerance' => 'nullable|string|max:255',
             'capacity' => 'nullable|string|max:255',
             'speed' => 'nullable|string|max:255',
@@ -105,6 +123,28 @@ class ProductController extends Controller
             }
             $validated['img'] = null;
         }
+
+        foreach (['detail_img1', 'detail_img2', 'detail_img3'] as $field) {
+            if ($request->hasFile($field)) {
+                if ($product->$field) {
+                    $oldPath = str_replace('/uploads/', '', $product->$field);
+                    Storage::disk('public')->delete($oldPath);
+                }
+                $manager = new ImageManager(new Driver());
+                $image = $manager->read($request->file($field));
+                $encoded = $image->toWebp(80);
+                $filename = uniqid() . '_' . $field . '.webp';
+                Storage::disk('public')->put('products/' . $filename, (string) $encoded);
+                $validated[$field] = '/uploads/products/' . $filename;
+            } elseif ($request->has("remove_{$field}") && $request->input("remove_{$field}") == '1') {
+                if ($product->$field) {
+                    $oldPath = str_replace('/uploads/', '', $product->$field);
+                    Storage::disk('public')->delete($oldPath);
+                }
+                $validated[$field] = null;
+            }
+        }
+
         if (!isset($validated['specs']) || is_null($validated['specs'])) {
             $validated['specs'] = [];
         }
@@ -122,6 +162,12 @@ class ProductController extends Controller
         if ($product->img) {
             $oldPath = str_replace('/uploads/', '', $product->img);
             Storage::disk('public')->delete($oldPath);
+        }
+        foreach (['detail_img1', 'detail_img2', 'detail_img3'] as $field) {
+            if ($product->$field) {
+                $oldPath = str_replace('/uploads/', '', $product->$field);
+                Storage::disk('public')->delete($oldPath);
+            }
         }
         $product->delete();
         return response()->json(['message' => 'Product deleted successfully']);

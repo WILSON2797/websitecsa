@@ -33,19 +33,19 @@
               <!-- Technical Parameter Cards Grid -->
               <div class="row g-2 mb-3 param-grid">
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">KELAS TOLERANSI</span>
+                  <span class="font-label-md param-label">TOLERANCE / SPECIFICATION</span>
                   <span class="fs-5 fw-bold param-val">{{ getToleranceVal(productId) }}</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">KAPASITAS TEKAN</span>
+                  <span class="font-label-md param-label">PRODUCTION CAPACITY</span>
                   <span class="fs-5 fw-bold param-val">{{ getCapacityVal(productId) }}</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">SPEED RATE (STROKES)</span>
+                  <span class="font-label-md param-label">SPEED RATE</span>
                   <span class="fs-5 fw-bold param-val">{{ getSpeedVal(productId) }}</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">VOLUME PRODUKSI</span>
+                  <span class="font-label-md param-label">PRODUCTION VOLUME</span>
                   <span class="fs-5 fw-bold param-val">{{ getVolumeVal(productId) }}</span>
                 </div>
               </div>
@@ -64,8 +64,30 @@
               <div class="metrology-indicator-dot-blue pulse"></div>
             </div>
             
-            <div class="blueprint-vector-graphic my-2 py-1 text-center position-relative z-1">
-              <i :class="['ti', product.icon || 'ti-hammer']" class="schema-icon"></i>
+            <div class="blueprint-vector-graphic my-2 py-1 text-center position-relative z-1" style="min-height: 250px; display: flex; align-items: center; justify-content: center; flex-direction: column;">
+              
+              <!-- Custom Image Slider -->
+              <template v-if="detailImages.length > 0">
+                <div class="slider-container" style="position: relative; width: 100%; height: 100%; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05); cursor: pointer;" @click="openLightbox(detailImages[activeSlide])">
+                  <img :src="detailImages[activeSlide]" alt="Product detail" style="width: 100%; height: 250px; object-fit: contain; transition: opacity 0.3s ease;">
+                  
+                  <!-- Navigation Arrows -->
+                  <div v-if="detailImages.length > 1" class="slider-arrows" style="position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; pointer-events: none;">
+                    <button type="button" @click.stop="prevSlide" style="pointer-events: auto; background: rgba(15, 42, 66, 0.7); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="ti ti-chevron-left"></i></button>
+                    <button type="button" @click.stop="nextSlide" style="pointer-events: auto; background: rgba(15, 42, 66, 0.7); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="ti ti-chevron-right"></i></button>
+                  </div>
+                </div>
+                
+                <!-- Dots -->
+                <div v-if="detailImages.length > 1" class="slider-dots" style="display: flex; gap: 6px; margin-top: 15px;">
+                  <button v-for="(img, idx) in detailImages" :key="idx" @click="setSlide(idx)" :style="{ width: '8px', height: '8px', borderRadius: '50%', border: 'none', padding: 0, background: activeSlide === idx ? 'var(--accent)' : '#d1d5db', transition: 'all 0.2s' }"></button>
+                </div>
+              </template>
+
+              <!-- Fallback Icon if no detail images -->
+              <template v-else>
+                <i :class="['ti', product.icon || 'ti-hammer']" class="schema-icon" style="font-size: 6rem; color: rgba(74, 143, 204, 0.5);"></i>
+              </template>
             </div>
             
             <div class="d-flex justify-content-between font-label-md text-secondary mt-1 pt-1 position-relative z-1 schema-footer">
@@ -76,34 +98,34 @@
         </div>
 
         <!-- Advanced Technical Profile Sheet -->
-        <h3 class="profile-section-title">Sub-Micron Engineering Profile</h3>
+        <h3 v-if="getAuxiliary(productId) || getSafety(productId) || getTypical(productId)" class="profile-section-title">Sub-Micron Engineering Profile</h3>
         
         <div class="row g-3 mb-4 profile-cards-grid">
           
-          <div class="p-3.5 rounded-3xl engineering-profile-card">
+          <div v-if="getAuxiliary(productId)" class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-settings fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Sistem Pendukung (Auxiliary)</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Auxiliary System</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getAuxiliary(productId) }}
             </p>
           </div>
 
-          <div class="p-3.5 rounded-3xl engineering-profile-card">
+          <div v-if="getSafety(productId)" class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-shield-check fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Keamanan & Sensor</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Safety</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getSafety(productId) }}
             </p>
           </div>
 
-          <div class="p-3.5 rounded-3xl engineering-profile-card">
+          <div v-if="getTypical(productId)" class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-packages fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Aplikasi Produk</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Product Applications</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ getTypical(productId) }}
@@ -132,6 +154,13 @@
 
       </div>
     </div>
+    
+    <!-- Lightbox Modal -->
+    <div v-if="showLightbox" class="lightbox-overlay" @click="closeLightbox" style="position: fixed; inset: 0; background: rgba(15, 42, 66, 0.95); z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(4px);">
+      <button @click="closeLightbox" style="position: absolute; top: 20px; right: 20px; background: transparent; border: none; color: white; font-size: 2rem; cursor: pointer;"><i class="ti ti-x"></i></button>
+      <img :src="lightboxImg" style="max-width: 90%; max-height: 90vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.5);">
+    </div>
+
   </div>
 </template>
 
@@ -151,6 +180,43 @@ export default {
     const route = useRoute();
     const product = ref(null);
     const productId = ref(0);
+    const activeSlide = ref(0);
+    const showLightbox = ref(false);
+    const lightboxImg = ref('');
+
+    const detailImages = computed(() => {
+      if (!product.value) return [];
+      const imgs = [];
+      if (product.value.detail_img1) imgs.push(product.value.detail_img1);
+      if (product.value.detail_img2) imgs.push(product.value.detail_img2);
+      if (product.value.detail_img3) imgs.push(product.value.detail_img3);
+      return imgs;
+    });
+
+    const nextSlide = () => {
+      if (detailImages.value.length === 0) return;
+      activeSlide.value = (activeSlide.value + 1) % detailImages.value.length;
+    };
+
+    const prevSlide = () => {
+      if (detailImages.value.length === 0) return;
+      activeSlide.value = activeSlide.value === 0 ? detailImages.value.length - 1 : activeSlide.value - 1;
+    };
+
+    const setSlide = (index) => {
+      activeSlide.value = index;
+    };
+
+    const openLightbox = (imgSrc) => {
+      if (!imgSrc) return;
+      lightboxImg.value = imgSrc;
+      showLightbox.value = true;
+    };
+
+    const closeLightbox = () => {
+      showLightbox.value = false;
+      lightboxImg.value = '';
+    };
 
     const loadProduct = () => {
       let products = props.content.products_list || [];
@@ -163,6 +229,7 @@ export default {
       if (!isNaN(index) && products[index]) {
         product.value = products[index];
         productId.value = index;
+        activeSlide.value = 0; // reset slide
       }
     };
 
@@ -219,46 +286,15 @@ export default {
     };
 
     const getAuxiliary = (id) => {
-      if (product.value && product.value.auxiliary) return product.value.auxiliary;
-      switch (id) {
-        case 0: return 'Peralatan decoiler loops otomatis, roller straightener leveling loops, pelumas otomatis mikro spray.';
-        case 1: return 'Bantalan hidrolik kontrol tekanan, pengontrol ketebalan lembaran, sistem pembentuk tanpa sambungan khusus.';
-        case 2: return 'Penjepit pilot mikro hidrolik presisi tinggi, fine blanking punch clearances, die ejector pad assemblies.';
-        case 3: return 'Robot manipulator lengan transfer otomatis, stasiun pengubah die cepat, pilot indexing pins.';
-        case 4: return 'Sistem CAD/CAM die design modeling, wire cut EDM generator sub-micron, multi-axis CNC stage fixtures.';
-        case 5: return 'Bak pelapis electroplating kimia otomatis, oven conveyorized powder coating, spray pretreatment loops.';
-        default: return 'Sistem sensor penumpuk ganda otomatis, pengumpan rol presisi, sensor kelonggaran die.';
-      }
+      return product.value && product.value.auxiliary ? product.value.auxiliary : null;
     };
 
     const getSafety = (id) => {
-      if (product.value && product.value.safety) return product.value.safety;
-      switch (id) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-          return 'Tirai cahaya optoelektronik keselamatan kerja, sensor deteksi penumpukan pelat ganda, rem kopling pneumatik darurat.';
-        case 4:
-          return 'Pintu kabin tertutup sensor interlock laser, sensor pendeteksi getaran poros spindel spindel, sensor overload motor CNC.';
-        case 5:
-          return 'Pembersih udara filter hisap uap kimia asam, pengaman katup pelepas gas otomatis, sensor kebocoran kimia.';
-        default:
-          return 'Sensor darurat emergency stop switch interlock, sirkuit pengaman kelistrikan panel, sensor pelindung optis.';
-      }
+      return product.value && product.value.safety ? product.value.safety : null;
     };
 
     const getTypical = (id) => {
-      if (product.value && product.value.typical) return product.value.typical;
-      switch (id) {
-        case 0: return 'Terminal kelistrikan kuningan, klip pegas motor, braket mesin mobil, EMI shielding electronics housing.';
-        case 1: return 'Baterai EV shell cups, filter oli silinder tanpa sambungan, tabung pemadam api, tutup tangki BBM.';
-        case 2: return 'Roda gigi transmisi presisi halus, kopling cakram, pelat katup pengereman safety, spacer mesin mikro.';
-        case 3: return 'Braket penguat sasis otomotif ukuran besar, panel pintu struktural, penutup kompresor pendingin udara.';
-        case 4: return 'Progressive die sets, stage tooling dies, transfer die arm fixtures, CNC custom molds.';
-        case 5: return 'Braket berlapis zinc anti korosi, panel eksterior powder coated, komponen elektrikal dengan ketahanan karat.';
-        default: return 'Komponen stamping industri otomotif, elektronik, dan kelistrikan umum.';
-      }
+      return product.value && product.value.typical ? product.value.typical : null;
     };
 
     const waUrl = computed(() => {
@@ -281,7 +317,16 @@ export default {
       getAuxiliary,
       getSafety,
       getTypical,
-      waUrl
+      waUrl,
+      detailImages,
+      activeSlide,
+      nextSlide,
+      prevSlide,
+      setSlide,
+      showLightbox,
+      lightboxImg,
+      openLightbox,
+      closeLightbox
     };
   }
 };
