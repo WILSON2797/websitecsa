@@ -32,7 +32,7 @@
               <input type="text" v-model="form.name" required class="form-control">
             </div>
             <div class="form-group half">
-              <label>Spesifikasi Utama *</label>
+              <label>Main Specification *</label>
               <input type="text" v-model="form.spec" required class="form-control" placeholder="e.g. 110 - 200 Ton">
             </div>
           </div>
@@ -71,7 +71,7 @@
 
           <div class="form-group">
             <label>Sistem Daya & Operasional (Power & Operational System)</label>
-            <textarea v-model="form.power_system" class="form-control" rows="2" placeholder="Biarkan kosong untuk menggunakan deskripsi bahasa Inggris bawaan"></textarea>
+            <textarea v-model="form.power_system" class="form-control" rows="2" placeholder="Each unit is supported by a stable industrial power system"></textarea>
           </div>
 
           <div class="form-row">
