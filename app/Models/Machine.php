@@ -20,5 +20,6 @@ class Machine extends Model
         'precision',
         'safety',
         'application',
+        'power_system',
     ];
 }

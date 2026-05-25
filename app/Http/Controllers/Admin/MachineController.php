@@ -43,6 +43,7 @@ class MachineController extends Controller
             'precision' => 'nullable|string|max:255',
             'safety' => 'nullable|string',
             'application' => 'nullable|string',
+            'power_system' => 'nullable|string',
         ]);
 
         if ($request->hasFile('img')) {
@@ -73,6 +74,7 @@ class MachineController extends Controller
             'precision' => 'nullable|string|max:255',
             'safety' => 'nullable|string',
             'application' => 'nullable|string',
+            'power_system' => 'nullable|string',
         ]);
 
         if ($request->hasFile('img')) {

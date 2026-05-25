@@ -69,6 +69,11 @@
             <textarea v-model="form.application" class="form-control" rows="2"></textarea>
           </div>
 
+          <div class="form-group">
+            <label>Sistem Daya & Operasional (Power & Operational System)</label>
+            <textarea v-model="form.power_system" class="form-control" rows="2" placeholder="Biarkan kosong untuk menggunakan deskripsi bahasa Inggris bawaan"></textarea>
+          </div>
+
           <div class="form-row">
             <div class="form-group half">
               <label>Ikon Tabler</label>
@@ -215,7 +220,8 @@ export default {
       origin: '',
       precision: '',
       safety: '',
-      application: ''
+      application: '',
+      power_system: ''
     };
 
     const form = ref({ ...defaultForm });
@@ -242,7 +248,13 @@ export default {
 
     const openModal = (item = null) => {
       if (item) {
-        form.value = { ...item, imgFile: null, previewImg: item.img, remove_img: 0 };
+        form.value = { 
+          ...item, 
+          imgFile: null, 
+          previewImg: item.img, 
+          remove_img: 0,
+          power_system: item.power_system || '' 
+        };
       } else {
         form.value = { ...defaultForm, remove_img: 0 };
       }

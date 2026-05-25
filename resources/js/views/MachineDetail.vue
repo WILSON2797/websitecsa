@@ -41,19 +41,19 @@
               <!-- Technical Parameter Cards Grid -->
               <div class="row g-2 mb-3 param-grid">
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">KAPASITAS TEKAN</span>
+                  <span class="font-label-md param-label">MAIN SPECIFICATION</span>
                   <span class="fs-5 fw-bold param-val">{{ machine.spec }}</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">ARMADA TERSEDIA</span>
-                  <span class="fs-5 fw-bold param-val">{{ machine.qty }} Unit Aktif</span>
+                  <span class="font-label-md param-label">AVAILABLE FLEET</span>
+                  <span class="fs-5 fw-bold param-val">{{ machine.qty }} Active Units</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">NEGARA ASAL PABRIKAN</span>
+                  <span class="font-label-md param-label">COUNTRY OF ORIGIN</span>
                   <span class="fs-5 fw-bold param-val">{{ machine.details.origin }}</span>
                 </div>
                 <div class="p-2.5 rounded-xl param-card">
-                  <span class="font-label-md param-label">STANDAR AKURASI</span>
+                  <span class="font-label-md param-label">ACCURACY STANDARD</span>
                   <span class="fs-5 fw-bold param-val">{{ machine.details.precision }}</span>
                 </div>
               </div>
@@ -95,7 +95,7 @@
           <div class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-shield-check fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Sistem Keselamatan Kerja</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Safety & Protection System</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ machine.details.safety }}
@@ -105,7 +105,7 @@
           <div class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-target fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Aplikasi Utama Komponen</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Key Applications</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
               {{ machine.details.application }}
@@ -115,10 +115,10 @@
           <div class="p-3.5 rounded-3xl engineering-profile-card">
             <div class="d-flex align-items-center gap-3 mb-2 profile-card-header">
               <div class="spec-icon-box"><i class="ti ti-settings fs-4 profile-icon"></i></div>
-              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Sistem Pelumas & Daya</h4>
+              <h4 class="font-headline-sm text-primary mb-0 profile-card-title">Power & Operational System</h4>
             </div>
             <p class="font-body-sm text-secondary opacity-75 mb-0 profile-card-desc">
-              Masing-masing armada diintegrasikan dengan unit otomatisasi sirkulasi fluida pembersih dies, sensor pengukur ketegangan plat, pelumas spray bertekanan mikro udara, dan sirkuit catu daya ramah lingkungan bersertifikasi ISO 14001.
+              {{ machine.details.power_system }}
             </p>
           </div>
         </div>
@@ -278,7 +278,8 @@ export default {
               origin: item.origin || (bm.details && bm.details.origin) || 'Jepang / Taiwan',
               precision: item.precision || item.tolerance || (bm.details && bm.details.precision) || 'JIS Standard Accuracy',
               safety: item.safety || (bm.details && bm.details.safety) || 'Sistem keselamatan kerja optoelektronik dengan tirai cahaya pengaman sensor gerak otomatis.',
-              application: item.application || (bm.details && bm.details.application) || 'Pengerjaan komponen presisi lembaran logam.'
+              application: item.application || (bm.details && bm.details.application) || 'Pengerjaan komponen presisi lembaran logam.',
+              power_system: item.power_system || (bm.details && bm.details.power_system) || 'Each unit is supported by a stable industrial power system, overload circuit protection, and standard routine maintenance to ensure consistent performance and safety.'
             }
           };
         });
