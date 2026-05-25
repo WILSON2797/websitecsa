@@ -6,8 +6,16 @@
       <div class="hero-bg-lines"></div>
       <div class="hero-accent-bar"></div>
 
+      <!-- Loading State -->
+      <div v-if="isLoading" class="container py-5 text-center position-relative z-1 empty-state-container">
+        <div class="d-flex flex-column align-items-center justify-content-center py-5">
+          <i class="ti ti-loader animate-spin fs-1 mb-3" style="color: var(--accent);"></i>
+          <p class="text-secondary font-body-md opacity-75">Memuat spesifikasi mesin...</p>
+        </div>
+      </div>
+
       <!-- Not Found State -->
-      <div v-if="!machine" class="container py-5 text-center position-relative z-1 empty-state-container">
+      <div v-else-if="!machine" class="container py-5 text-center position-relative z-1 empty-state-container">
         <h2 class="text-danger mb-4 empty-state-title">Alat Tidak Ditemukan</h2>
         <p class="text-secondary mb-4 opacity-75">Spesifikasi mesin yang Anda cari tidak tersedia dalam inventaris kami.</p>
         <router-link to="/" class="btn-ghost-dark">
@@ -140,8 +148,9 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute } from 'vue-router';
+import axios from 'axios';
 
 export default {
   name: 'MachineDetail',
@@ -155,6 +164,7 @@ export default {
     const route = useRoute();
     const machine = ref(null);
     const machineId = ref(0);
+    const isLoading = ref(true);
 
     const getMachineImg = (idx) => {
       if (machine.value && machine.value.img) return machine.value.img;
@@ -169,8 +179,7 @@ export default {
       return fallbacks[idx] || fallbacks[0];
     };
 
-    const loadMachine = () => {
-      // Custom static dataset containing augmented data matching Machines list
+    const loadMachine = async () => {
       const baseMachines = [
         { 
           name: 'Mechanical Press', 
@@ -252,41 +261,81 @@ export default {
         }
       ];
 
-      let list = props.content.machines_list || [];
-      if (typeof list === 'string') {
-        list = JSON.parse(list);
-      }
-
-      if (!list || list.length === 0) {
-        list = baseMachines;
-      }
-
-      // Merge dynamic database items with static defaults matching indices
-      const mergedList = list.map((item, index) => {
-        const bm = baseMachines[index] || {};
-        return {
-          name: item.name || bm.name,
-          spec: item.spec || bm.spec,
-          qty: item.qty || bm.qty,
-          icon: item.icon || bm.icon || 'ti-settings-2',
-          img: item.img || bm.img,
-          longDesc: item.longDesc || bm.longDesc || 'Armada mesin manufaktur presisi tinggi Cahaya Sentosa Abadi.',
-          details: {
-            origin: item.origin || (bm.details && bm.details.origin) || 'Jepang / Taiwan',
-            precision: item.precision || (bm.details && bm.details.precision) || 'JIS Standard Accuracy',
-            safety: item.safety || (bm.details && bm.details.safety) || 'Sistem keselamatan kerja optoelektronik dengan tirai cahaya pengaman sensor gerak otomatis.',
-            application: item.application || (bm.details && bm.details.application) || 'Pengerjaan komponen presisi lembaran logam.'
-          }
-        };
-      });
-
       const paramId = route.params.id;
-      const index = parseInt(paramId, 10);
-      if (!isNaN(index) && mergedList[index]) {
-        machine.value = mergedList[index];
-        machineId.value = index;
+
+      const resolveFromList = (sourceList) => {
+        const mappedList = sourceList.map((item, index) => {
+          const bm = baseMachines[index] || {};
+          return {
+            id: item.id !== undefined ? item.id : index,
+            name: item.name || bm.name || 'Machine',
+            spec: item.spec || item.capacity || bm.spec || '',
+            qty: item.qty || bm.qty || 1,
+            icon: item.icon || bm.icon || 'ti-settings-2',
+            img: item.img || bm.img || '',
+            longDesc: item.longDesc || bm.longDesc || 'Armada mesin manufaktur presisi tinggi Cahaya Sentosa Abadi.',
+            details: {
+              origin: item.origin || (bm.details && bm.details.origin) || 'Jepang / Taiwan',
+              precision: item.precision || item.tolerance || (bm.details && bm.details.precision) || 'JIS Standard Accuracy',
+              safety: item.safety || (bm.details && bm.details.safety) || 'Sistem keselamatan kerja optoelektronik dengan tirai cahaya pengaman sensor gerak otomatis.',
+              application: item.application || (bm.details && bm.details.application) || 'Pengerjaan komponen presisi lembaran logam.'
+            }
+          };
+        });
+
+        const foundIndex = mappedList.findIndex(item => String(item.id) === String(paramId));
+        if (foundIndex !== -1) {
+          machine.value = mappedList[foundIndex];
+          
+          const baseIndex = baseMachines.findIndex(bm => 
+            machine.value.name.toLowerCase().includes(bm.name.toLowerCase()) ||
+            bm.name.toLowerCase().includes(machine.value.name.toLowerCase())
+          );
+          machineId.value = baseIndex !== -1 ? baseIndex : foundIndex;
+          isLoading.value = false;
+          return true;
+        }
+        return false;
+      };
+
+      // 1. Try loading synchronously from props.content.machines_list first (instant load!)
+      let dbSource = props.content.machines_list;
+      if (dbSource) {
+        if (typeof dbSource === 'string') {
+          try {
+            dbSource = JSON.parse(dbSource);
+          } catch (e) {}
+        }
+        if (Array.isArray(dbSource) && dbSource.length > 0) {
+          const resolved = resolveFromList(dbSource);
+          if (resolved) return;
+        }
+      }
+
+      // 2. If not loaded yet (e.g. direct url deep link), show loader and fetch from API
+      isLoading.value = true;
+      let dbMachines = [];
+      try {
+        const res = await axios.get('/api/machines');
+        dbMachines = res.data;
+      } catch (err) {
+        console.error('Failed to fetch machines from DB:', err);
+      }
+
+      if (dbMachines && dbMachines.length > 0) {
+        resolveFromList(dbMachines);
+      } else {
+        // Fallback to static defaults
+        resolveFromList(baseMachines);
       }
     };
+
+    // Watch props.content in case it loads asynchronously after mounting
+    watch(() => props.content, () => {
+      if (!machine.value) {
+        loadMachine();
+      }
+    }, { deep: true });
 
     const waUrl = computed(() => {
       const number = props.content.contact_wa || '6281289901234';
@@ -301,6 +350,7 @@ export default {
     return {
       machine,
       machineId,
+      isLoading,
       getMachineImg,
       waUrl
     };

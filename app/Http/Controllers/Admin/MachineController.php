@@ -13,7 +13,7 @@ class MachineController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Machine::orderBy('id', 'desc');
+        $query = Machine::orderBy('id', 'asc');
 
         if ($search = $request->input('search')) {
             foreach ($search as $field => $value) {

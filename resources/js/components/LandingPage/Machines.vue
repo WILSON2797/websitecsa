@@ -29,7 +29,7 @@
             <p class="machine-card-spec"><i class="ti ti-activity me-1 text-accent"></i> {{ m.spec }}</p>
             <p class="machine-card-desc">{{ m.shortDesc }}</p>
             
-              <router-link :to="'/machine/' + idx" class="btn-machine-detail">
+              <router-link :to="'/machine/' + m.id" class="btn-machine-detail">
                 View Details <i class="ti ti-chevron-right ms-1"></i>
               </router-link>
             </div>
@@ -164,12 +164,13 @@ export default {
           return parsed.map((item, index) => {
             const bm = baseMachines[index] || {};
             return {
+              id: item.id !== undefined ? item.id : index,
               name: item.name || bm.name || 'Machine',
               spec: item.spec || bm.spec || '',
               qty: item.qty || bm.qty || 0,
               icon: item.icon || bm.icon || 'ti-settings-2',
               img: item.img || bm.img || '',
-              shortDesc: item.shortDesc || bm.shortDesc || item.longDesc || bm.longDesc || '',
+              shortDesc: item.longDesc || item.shortDesc || bm.shortDesc || '',
               longDesc: item.longDesc || bm.longDesc || '',
               details: {
                 origin: item.origin || (bm.details && bm.details.origin) || '',
@@ -183,7 +184,10 @@ export default {
           console.error('Failed to parse dynamic machines_list, fallback to default:', e);
         }
       }
-      return baseMachines;
+      return baseMachines.map((bm, index) => ({
+        id: index,
+        ...bm
+      }));
     });
 
     const facilityList = computed(() => {
@@ -372,6 +376,11 @@ export default {
   line-height: 1.6;
   margin-bottom: 20px;
   flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  height: 42px;
 }
 
 .btn-machine-detail {

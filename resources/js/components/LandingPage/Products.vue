@@ -23,7 +23,7 @@
               </span>
             </div>
             
-            <router-link :to="'/product/' + idx" class="btn-product-detail">
+            <router-link :to="'/product/' + prod.id" class="btn-product-detail">
               View Specifications <i class="ti ti-chevron-right ms-1"></i>
             </router-link>
           </div>
@@ -48,14 +48,18 @@ export default {
     const productList = computed(() => {
       if (props.content.products_list) {
         try {
-          return typeof props.content.products_list === 'string'
+          const list = typeof props.content.products_list === 'string'
             ? JSON.parse(props.content.products_list)
             : props.content.products_list;
+          return list.map((item, index) => ({
+            id: item.id !== undefined ? item.id : index,
+            ...item
+          }));
         } catch (e) {
           console.error('Failed to parse products_list:', e);
         }
       }
-      return [
+      const baseProducts = [
         {
           tag: 'HIGH VOLUME',
           name: 'Progressive Stamping',
@@ -99,6 +103,10 @@ export default {
           icon: 'ti-droplets'
         }
       ];
+      return baseProducts.map((p, index) => ({
+        id: index,
+        ...p
+      }));
     });
 
     const getProductImg = (prod, idx) => {

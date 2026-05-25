@@ -68,19 +68,24 @@
               
               <!-- Custom Image Slider -->
               <template v-if="detailImages.length > 0">
-                <div class="slider-container" style="position: relative; width: 100%; height: 100%; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05); cursor: pointer;" @click="openLightbox(detailImages[activeSlide])">
-                  <img :src="detailImages[activeSlide]" alt="Product detail" style="width: 100%; height: 250px; object-fit: contain; transition: opacity 0.3s ease;">
+                <div class="slider-wrapper" style="position: relative; width: 100%;">
+                  
+                  <div class="slider-container" style="position: relative; width: 100%; height: 250px; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.05); cursor: pointer;" @click="openLightbox(detailImages[activeSlide])">
+                    <transition-group name="fade" tag="div" style="position: relative; width: 100%; height: 100%;">
+                      <img v-for="(img, idx) in detailImages" :key="img" v-show="activeSlide === idx" :src="img" alt="Product detail" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: contain;">
+                    </transition-group>
+                  </div>
                   
                   <!-- Navigation Arrows -->
-                  <div v-if="detailImages.length > 1" class="slider-arrows" style="position: absolute; inset: 0; display: flex; justify-content: space-between; align-items: center; padding: 0 10px; pointer-events: none;">
-                    <button type="button" @click.stop="prevSlide" style="pointer-events: auto; background: rgba(15, 42, 66, 0.7); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="ti ti-chevron-left"></i></button>
-                    <button type="button" @click.stop="nextSlide" style="pointer-events: auto; background: rgba(15, 42, 66, 0.7); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background 0.2s;"><i class="ti ti-chevron-right"></i></button>
+                  <div v-if="detailImages.length > 1" class="slider-arrows" style="position: absolute; top: 50%; left: -15px; right: -15px; transform: translateY(-50%); display: flex; justify-content: space-between; align-items: center; pointer-events: none; z-index: 2;">
+                    <button type="button" @click.stop="prevSlide" style="pointer-events: auto; cursor: pointer; background: rgba(15, 42, 66, 0.95); color: white; border: 2px solid white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="ti ti-chevron-left" style="font-size: 1.2rem;"></i></button>
+                    <button type="button" @click.stop="nextSlide" style="pointer-events: auto; cursor: pointer; background: rgba(15, 42, 66, 0.95); color: white; border: 2px solid white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.3);"><i class="ti ti-chevron-right" style="font-size: 1.2rem;"></i></button>
                   </div>
                 </div>
                 
                 <!-- Dots -->
                 <div v-if="detailImages.length > 1" class="slider-dots" style="display: flex; gap: 6px; margin-top: 15px;">
-                  <button v-for="(img, idx) in detailImages" :key="idx" @click="setSlide(idx)" :style="{ width: '8px', height: '8px', borderRadius: '50%', border: 'none', padding: 0, background: activeSlide === idx ? 'var(--accent)' : '#d1d5db', transition: 'all 0.2s' }"></button>
+                  <button type="button" v-for="(img, idx) in detailImages" :key="idx" @click.stop="setSlide(idx)" :style="{ cursor: 'pointer', width: '8px', height: '8px', borderRadius: '50%', border: 'none', padding: 0, background: activeSlide === idx ? 'var(--accent)' : '#d1d5db', transition: 'all 0.2s' }"></button>
                 </div>
               </template>
 
@@ -219,16 +224,79 @@ export default {
     };
 
     const loadProduct = () => {
-      let products = props.content.products_list || [];
-      if (typeof products === 'string') {
-        products = JSON.parse(products);
+      const baseProducts = [
+        {
+          tag: 'HIGH VOLUME',
+          name: 'Progressive Stamping',
+          desc: 'Proses stamping berkelanjutan dengan beberapa stasiun die untuk produksi volume tinggi secara efisien.',
+          specs: ['±0.05mm toleransi', 'Vol. tinggi', 'Otomatis'],
+          icon: 'ti-adjustments-horizontal'
+        },
+        {
+          tag: 'COMPLEX SHAPE',
+          name: 'Deep Drawing',
+          desc: 'Proses pembentukan lembaran logam menjadi komponen berbentuk cup, silinder, atau shell tanpa sambungan.',
+          specs: ['Tanpa sambungan', 'Ketebalan seragam'],
+          icon: 'ti-arrow-down-circle'
+        },
+        {
+          tag: 'PRECISION CUT',
+          name: 'Fine Blanking',
+          desc: 'Pemotongan presisi dengan permukaan shear yang halus dan rata tanpa memerlukan proses finishing tambahan.',
+          specs: ['Permukaan halus', 'No finishing'],
+          icon: 'ti-scissors'
+        },
+        {
+          tag: 'MULTI-STEP',
+          name: 'Transfer Stamping',
+          desc: 'Proses multi-tahap dengan transfer otomatis antar stasiun, ideal untuk komponen berukuran besar and kompleks.',
+          specs: ['Komponen besar', 'Transfer otomatis'],
+          icon: 'ti-repeat'
+        },
+        {
+          tag: 'IN-HOUSE',
+          name: 'Tool & Die Making',
+          desc: 'Desain dan fabrikasi die in-house menggunakan CAD/CAM dan mesin CNC presisi tinggi untuk semua jenis tooling.',
+          specs: ['CAD/CAM', 'CNC Machining'],
+          icon: 'ti-tool'
+        },
+        {
+          tag: 'FINISHING',
+          name: 'Surface Treatment',
+          desc: 'Layanan electroplating, powder coating, dan phosphating untuk meningkatkan ketahanan korosi dan estetika produk.',
+          specs: ['Electroplating', 'Powder Coating'],
+          icon: 'ti-droplets'
+        }
+      ];
+
+      let list = props.content.products_list || [];
+      if (typeof list === 'string') {
+        list = JSON.parse(list);
+      }
+
+      if (list && list.length > 0) {
+        list = list.map((item, index) => ({
+          id: item.id !== undefined ? item.id : index,
+          ...item
+        }));
+      } else {
+        list = baseProducts.map((p, index) => ({
+          id: index,
+          ...p
+        }));
       }
 
       const paramId = route.params.id;
-      const index = parseInt(paramId, 10);
-      if (!isNaN(index) && products[index]) {
-        product.value = products[index];
-        productId.value = index;
+      const foundIndex = list.findIndex(item => String(item.id) === String(paramId));
+      if (foundIndex !== -1) {
+        product.value = list[foundIndex];
+        
+        // Find corresponding index in baseProducts by name match to keep correct spec/capacity getters mapping
+        const baseIndex = baseProducts.findIndex(bp => 
+          product.value.name.toLowerCase().includes(bp.name.toLowerCase()) ||
+          bp.name.toLowerCase().includes(product.value.name.toLowerCase())
+        );
+        productId.value = baseIndex !== -1 ? baseIndex : foundIndex;
         activeSlide.value = 0; // reset slide
       }
     };
@@ -719,6 +787,16 @@ export default {
   padding: 12px 28px;
   font-size: 13px;
   text-decoration: none;
+}
+
+/* Slider Fade Animation */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 /* Responsive Overrides */
