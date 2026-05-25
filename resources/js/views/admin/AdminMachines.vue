@@ -274,6 +274,13 @@ export default {
           return;
         }
         
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
         try {
           const options = {
             maxSizeMB: 1,
@@ -284,6 +291,7 @@ export default {
           form.value.imgFile = compressedFile;
           form.value.previewImg = URL.createObjectURL(compressedFile);
           form.value.remove_img = 0;
+          Swal.close();
         } catch (error) {
           console.error('Compression error:', error);
           Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
@@ -301,6 +309,12 @@ export default {
 
     const saveItem = async () => {
       saving.value = true;
+      Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Sedang mengunggah data ke server.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
       try {
         const formData = new FormData();
         Object.keys(form.value).forEach(key => {
