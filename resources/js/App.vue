@@ -33,6 +33,18 @@
         </router-view>
 
         <Footer :content="content" :certificates="certificates" />
+
+        <!-- Floating WhatsApp Button -->
+        <a 
+          v-if="content.social_wa || content.contact_telp"
+          :href="'https://wa.me/' + (content.social_wa || formatWaNumber(content.contact_telp))"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="whatsapp-float"
+          title="Contact Us on WhatsApp"
+        >
+          <i class="ti ti-brand-whatsapp"></i>
+        </a>
       </div>
     </template>
   </div>
@@ -188,6 +200,15 @@ export default {
       });
     });
 
+    const formatWaNumber = (num) => {
+      if (!num) return '';
+      let clean = num.replace(/\D/g, '');
+      if (clean.startsWith('0')) {
+        clean = '62' + clean.substring(1);
+      }
+      return clean;
+    };
+
     return {
       routerReady,
       loading,
@@ -195,7 +216,8 @@ export default {
       certificates,
       activeSection,
       updateActiveSection,
-      isAdminRoute
+      isAdminRoute,
+      formatWaNumber
     };
   }
 };
@@ -217,5 +239,67 @@ export default {
 .intro-fade-leave-to {
   opacity: 0;
   transform: scale(1.05);
+}
+
+/* Floating WhatsApp Button */
+.whatsapp-float {
+  position: fixed;
+  width: 56px;
+  height: 56px;
+  bottom: 24px;
+  right: 24px;
+  background-color: #25d366;
+  color: #fff;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 32px;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
+  z-index: 998;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-decoration: none;
+}
+.whatsapp-float:hover {
+  background-color: #128c7e;
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: 0 6px 16px rgba(18, 140, 126, 0.4);
+}
+.whatsapp-float i {
+  display: block;
+  line-height: 1;
+}
+/* Pulse Animation */
+.whatsapp-float::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #25d366;
+  opacity: 0.6;
+  z-index: -1;
+  animation: wa-pulse 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+@keyframes wa-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 48px;
+    height: 48px;
+    bottom: 16px;
+    right: 16px;
+    font-size: 26px;
+  }
 }
 </style>
