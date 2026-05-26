@@ -10,6 +10,9 @@
 
     <title>PT. Cahaya Sentosa Abadi — Precision Metal Stamping</title>
 
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/LogoCSA2.png">
+
     <!-- Preconnect to external assets -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
