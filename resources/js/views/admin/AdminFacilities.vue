@@ -14,6 +14,7 @@
         :pagination="pagination"
         :loading="loading"
         @page-change="loadData"
+        @search="handleSearch"
       />
     </div>
 
@@ -198,11 +199,20 @@ export default {
     };
 
     const form = ref({ ...defaultForm });
+    const searchQueries = ref({});
 
     const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get(`/api/admin/facilities?page=${page}`);
+        const params = { page };
+        if (searchQueries.value) {
+          Object.keys(searchQueries.value).forEach(key => {
+            if (searchQueries.value[key]) {
+              params[`search[${key}]`] = searchQueries.value[key];
+            }
+          });
+        }
+        const res = await axios.get('/api/admin/facilities', { params });
         facilities.value = res.data.data;
         pagination.value = {
           current_page: res.data.current_page,
@@ -217,6 +227,11 @@ export default {
       } finally {
         loading.value = false;
       }
+    };
+
+    const handleSearch = (newSearchQueries) => {
+      searchQueries.value = newSearchQueries;
+      loadData(1);
     };
 
     const openModal = (item = null) => {
@@ -269,6 +284,13 @@ export default {
           return;
         }
         
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+        
         try {
           const options = {
             maxSizeMB: 1,
@@ -279,6 +301,7 @@ export default {
           form.value.imgFile = compressedFile;
           form.value.previewImg = URL.createObjectURL(compressedFile);
           form.value.remove_img = 0;
+          Swal.close();
         } catch (error) {
           console.error('Compression error:', error);
           Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
@@ -296,6 +319,12 @@ export default {
 
     const saveItem = async () => {
       saving.value = true;
+      Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Sedang mengunggah data ke server.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
       try {
         // Gabungkan specLines menjadi JSON string
         const validSpecs = specLines.value.filter(line => line.label.trim() !== '' || line.value.trim() !== '');
@@ -371,7 +400,7 @@ export default {
 
     return {
       facilities, loading, saving, showModal, form, columns, pagination, specLines,
-      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem, addSpecLine, removeSpecLine
+      openModal, closeModal, handleFileUpload, removeImage, saveItem, deleteItem, addSpecLine, removeSpecLine, handleSearch
     };
   }
 }

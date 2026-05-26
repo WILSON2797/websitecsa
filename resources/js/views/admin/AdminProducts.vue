@@ -14,6 +14,7 @@
         :pagination="pagination"
         :loading="loading"
         @page-change="loadData"
+        @search="handleSearch"
       />
     </div>
 
@@ -301,11 +302,20 @@ export default {
     };
 
     const form = ref({ ...defaultForm });
+    const searchQueries = ref({});
 
     const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const res = await axios.get(`/api/admin/products?page=${page}`);
+        const params = { page };
+        if (searchQueries.value) {
+          Object.keys(searchQueries.value).forEach(key => {
+            if (searchQueries.value[key]) {
+              params[`search[${key}]`] = searchQueries.value[key];
+            }
+          });
+        }
+        const res = await axios.get('/api/admin/products', { params });
         products.value = res.data.data;
         pagination.value = {
           current_page: res.data.current_page,
@@ -320,6 +330,11 @@ export default {
       } finally {
         loading.value = false;
       }
+    };
+
+    const handleSearch = (newSearchQueries) => {
+      searchQueries.value = newSearchQueries;
+      loadData(1);
     };
 
     const openModal = (item = null) => {
@@ -531,7 +546,7 @@ export default {
     return {
       products, loading, saving, showModal, form, columns, pagination,
       openModal, closeModal, handleFileUpload, handleDetailUpload, removeImage, removeDetailImage, saveItem, deleteItem, addSpec, removeSpec,
-      mainImgInput, detailImgInput1, detailImgInput2, detailImgInput3
+      mainImgInput, detailImgInput1, detailImgInput2, detailImgInput3, handleSearch
     };
   }
 }

@@ -13,6 +13,7 @@
         :columns="columns"
         :loading="loading"
         @page-change="loadData"
+        @search="handleSearch"
       />
     </div>
 
@@ -54,13 +55,17 @@
           <div class="form-group image-upload-group">
             <label>Upload Foto *</label>
             <div class="file-upload-wrapper">
-              <input type="file" @change="handleFileUpload" accept="image/*" class="form-control" :required="!form.id">
+              <input type="file" ref="fileInput" @change="handleFileUpload" accept="image/*" class="form-control" :required="!form.id && !imagePreview && !form.image_url">
             </div>
             
             <!-- Image Preview -->
-            <div class="image-preview" v-if="imagePreview || form.image_url">
-              <p>Preview:</p>
-              <img :src="imagePreview || form.image_url" alt="Preview">
+            <div v-if="imagePreview || form.image_url" class="image-preview" style="margin-top:15px; display: flex; align-items: flex-start; justify-content: center;">
+              <div style="position: relative; display: inline-block; width: max-content;">
+                <img :src="imagePreview || form.image_url" alt="Preview" style="max-height: 150px; border-radius: 4px; border: 1px solid #ddd; padding: 2px; display: block;">
+                <button type="button" @click="removeImage" style="position: absolute; top: -8px; right: -8px; background: #ef4444; color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+                  <i class="ti ti-x"></i>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -81,6 +86,8 @@
 <script>
 import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
+import Swal from 'sweetalert2';
+import imageCompression from 'browser-image-compression';
 import DataTable from '../../components/admin/DataTable.vue';
 
 export default {
@@ -95,6 +102,7 @@ export default {
     const showModal = ref(false);
     const imagePreview = ref(null);
     const selectedFile = ref(null);
+    const fileInput = ref(null);
     
     const form = ref({
       id: null,
@@ -105,19 +113,35 @@ export default {
       display_order: 0
     });
 
+    const searchQueries = ref({});
+
     const loadData = async () => {
       loading.value = true;
       try {
+        const params = {};
+        if (searchQueries.value) {
+          Object.keys(searchQueries.value).forEach(key => {
+            if (searchQueries.value[key]) {
+              params[`search[${key}]`] = searchQueries.value[key];
+            }
+          });
+        }
         const response = await axios.get('/api/admin/galleries', {
+          params,
           headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
         });
         galleries.value = response.data;
       } catch (error) {
         console.error('Error loading galleries:', error);
-        alert('Gagal memuat data galeri');
+        Swal.fire('Error', 'Gagal memuat data galeri', 'error');
       } finally {
         loading.value = false;
       }
+    };
+
+    const handleSearch = (newSearchQueries) => {
+      searchQueries.value = newSearchQueries;
+      loadData();
     };
 
     onMounted(loadData);
@@ -137,18 +161,56 @@ export default {
       showModal.value = false;
     };
 
-    const handleFileUpload = (event) => {
+    const handleFileUpload = async (event) => {
       const file = event.target.files[0];
       if (file) {
-        selectedFile.value = file;
-        const reader = new FileReader();
-        reader.onload = e => imagePreview.value = e.target.result;
-        reader.readAsDataURL(file);
+        if (file.size > 15 * 1024 * 1024) {
+          Swal.fire('Error', 'Ukuran gambar maksimal adalah 15MB!', 'error');
+          event.target.value = '';
+          return;
+        }
+
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
+          };
+          const compressedFile = await imageCompression(file, options);
+          selectedFile.value = compressedFile;
+          imagePreview.value = URL.createObjectURL(compressedFile);
+          Swal.close();
+        } catch (error) {
+          console.error('Compression error:', error);
+          Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
+        }
+      }
+    };
+
+    const removeImage = () => {
+      selectedFile.value = null;
+      imagePreview.value = null;
+      form.value.image_url = '';
+      if (fileInput.value) {
+        fileInput.value.value = '';
       }
     };
 
     const saveItem = async () => {
       saving.value = true;
+      Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Sedang mengunggah data ke server.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
       try {
         const formData = new FormData();
         formData.append('title', form.value.title);
@@ -175,25 +237,38 @@ export default {
         }
         
         closeModal();
-        await loadData();
+        loadData();
+        Swal.fire('Sukses', 'Foto berhasil disimpan.', 'success');
       } catch (error) {
         console.error('Error saving gallery:', error);
-        alert('Gagal menyimpan foto. Cek ukuran max 5MB.');
+        Swal.fire('Error', 'Gagal menyimpan foto. Cek ukuran max 5MB.', 'error');
       } finally {
         saving.value = false;
       }
     };
 
     const deleteItem = async (id) => {
-      if (confirm('Yakin ingin menghapus foto ini secara permanen?')) {
+      const result = await Swal.fire({
+        title: 'Konfirmasi',
+        text: 'Yakin ingin menghapus foto ini secara permanen?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Ya, hapus!',
+        cancelButtonText: 'Batal'
+      });
+
+      if (result.isConfirmed) {
         try {
           await axios.delete(`/api/admin/galleries/${id}`, {
             headers: { Authorization: `Bearer ${localStorage.getItem('admin_token')}` }
           });
           await loadData();
+          Swal.fire('Terhapus!', 'Foto telah dihapus.', 'success');
         } catch (error) {
           console.error('Error deleting gallery:', error);
-          alert('Gagal menghapus data');
+          Swal.fire('Error', 'Gagal menghapus data.', 'error');
         }
       }
     };
@@ -252,7 +327,10 @@ export default {
       openModal,
       closeModal,
       handleFileUpload,
-      saveItem
+      saveItem,
+      fileInput,
+      removeImage,
+      handleSearch
     };
   }
 }

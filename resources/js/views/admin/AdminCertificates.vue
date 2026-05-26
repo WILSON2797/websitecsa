@@ -14,6 +14,7 @@
         :pagination="pagination"
         :loading="loading"
         @page-change="loadData"
+        @search="handleSearch"
       />
     </div>
 
@@ -80,6 +81,7 @@
 import { ref, onMounted, h } from 'vue';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import imageCompression from 'browser-image-compression';
 import IconPicker from '../../components/Admin/IconPicker.vue';
 import DataTable from '../../components/admin/DataTable.vue';
 
@@ -186,10 +188,20 @@ export default {
       remove_img: 0
     });
 
+    const searchQueries = ref({});
+
     const loadData = async (page = 1) => {
       loading.value = true;
       try {
-        const response = await axios.get(`/api/admin/certificates?page=${page}`);
+        const params = { page };
+        if (searchQueries.value) {
+          Object.keys(searchQueries.value).forEach(key => {
+            if (searchQueries.value[key]) {
+              params[`search[${key}]`] = searchQueries.value[key];
+            }
+          });
+        }
+        const response = await axios.get('/api/admin/certificates', { params });
         certificates.value = response.data.data;
         pagination.value = {
           current_page: response.data.current_page,
@@ -204,6 +216,11 @@ export default {
       } finally {
         loading.value = false;
       }
+    };
+
+    const handleSearch = (newSearchQueries) => {
+      searchQueries.value = newSearchQueries;
+      loadData(1);
     };
 
     onMounted(() => {
@@ -240,7 +257,7 @@ export default {
       resetForm();
     };
 
-    const handleFileChange = (e) => {
+    const handleFileChange = async (e) => {
       const file = e.target.files[0];
       if (file) {
         // Validation size (15MB)
@@ -249,14 +266,29 @@ export default {
           e.target.value = '';
           return;
         }
-        imageFile.value = file;
-        
-        // Preview
-        const reader = new FileReader();
-        reader.onload = (event) => {
-          imagePreview.value = event.target.result;
-        };
-        reader.readAsDataURL(file);
+
+        Swal.fire({
+          title: 'Memproses Gambar...',
+          text: 'Harap tunggu, gambar sedang dikompresi.',
+          allowOutsideClick: false,
+          didOpen: () => { Swal.showLoading(); }
+        });
+
+        try {
+          const options = {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1920,
+            useWebWorker: true
+          };
+          const compressedFile = await imageCompression(file, options);
+          imageFile.value = compressedFile;
+          imagePreview.value = URL.createObjectURL(compressedFile);
+          form.value.remove_img = 0;
+          Swal.close();
+        } catch (error) {
+          console.error('Compression error:', error);
+          Swal.fire('Error', 'Gagal mengompres gambar sebelum diunggah.', 'error');
+        }
       }
     };
 
@@ -272,6 +304,12 @@ export default {
 
     const saveItem = async () => {
       saving.value = true;
+      Swal.fire({
+        title: 'Menyimpan Data...',
+        text: 'Sedang mengunggah data ke server.',
+        allowOutsideClick: false,
+        didOpen: () => { Swal.showLoading(); }
+      });
       try {
         const formData = new FormData();
         formData.append('name', form.value.name);
@@ -371,7 +409,8 @@ export default {
       removeImage,
       saveItem,
       deleteItem,
-      handleFileChange
+      handleFileChange,
+      handleSearch
     };
   }
 };

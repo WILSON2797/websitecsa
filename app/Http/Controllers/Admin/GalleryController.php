@@ -9,10 +9,19 @@ use Illuminate\Support\Facades\Storage;
 
 class GalleryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $galleries = Gallery::orderBy('display_order')->get();
-        return response()->json($galleries);
+        $query = Gallery::orderBy('display_order');
+
+        if ($search = $request->input('search')) {
+            foreach ($search as $field => $value) {
+                if ($value && in_array($field, ['id', 'title', 'category', 'description'])) {
+                    $query->where($field, 'like', "%{$value}%");
+                }
+            }
+        }
+
+        return response()->json($query->get());
     }
 
     public function store(Request $request)

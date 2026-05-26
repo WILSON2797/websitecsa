@@ -14,6 +14,15 @@ class CertificateController extends Controller
     public function index(Request $request)
     {
         $query = Certificate::orderBy('order')->orderBy('id', 'desc');
+
+        if ($search = $request->input('search')) {
+            foreach ($search as $field => $value) {
+                if ($value && in_array($field, ['id', 'name', 'desc'])) {
+                    $query->where($field, 'like', "%{$value}%");
+                }
+            }
+        }
+
         if ($request->is('api/admin/*')) {
             return response()->json($query->paginate(10));
         }
